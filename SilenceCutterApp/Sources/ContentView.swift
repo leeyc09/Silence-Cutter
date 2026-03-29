@@ -1,7 +1,9 @@
 import SwiftUI
+import UniformTypeIdentifiers
 
 struct ContentView: View {
     @State private var bridge = PythonBridge()
+    @State private var videoModel = VideoPlayerModel()
     @State private var bridgeStatus: String = ""
     @State private var isTesting = false
 
@@ -30,15 +32,9 @@ struct ContentView: View {
         } detail: {
             // Right panel — video preview + timeline
             VStack(spacing: 0) {
-                // Video player placeholder (S02)
-                ZStack {
-                    Rectangle()
-                        .fill(.black)
-                    Text("Video Preview")
-                        .foregroundStyle(.white.opacity(0.5))
-                        .font(.title2)
-                }
-                .frame(maxHeight: .infinity)
+                // Video player (S02)
+                VideoPlayerView(model: videoModel)
+                    .frame(maxHeight: .infinity)
 
                 Divider()
 
@@ -56,7 +52,14 @@ struct ContentView: View {
                 // Toolbar
                 HStack {
                     Button("파일 열기") {
-                        // File open (S02)
+                        let panel = NSOpenPanel()
+                        panel.allowedContentTypes = [.movie, .mpeg4Movie, .quickTimeMovie]
+                        panel.allowsMultipleSelection = false
+                        panel.begin { response in
+                            if response == .OK, let url = panel.url {
+                                videoModel.loadVideo(url: url)
+                            }
+                        }
                     }
                     Spacer()
 
