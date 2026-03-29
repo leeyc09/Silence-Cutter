@@ -1,16 +1,30 @@
 [
   {
-    "id": "d5360200",
+    "id": "24af6202",
     "label": "SilenceCutterApp",
     "command": "cd /Users/youngchanlee/test/tts/Qwen3-TTS-Mac-GeneLab/SilenceCutterApp && swift run SilenceCutterApp 2>&1",
     "cwd": "/Users/youngchanlee/test/tts/Qwen3-TTS-Mac-GeneLab",
     "ownerSessionFile": "/Users/youngchanlee/.gsd/sessions/--Users-youngchanlee-test-tts-Qwen3-TTS-Mac-GeneLab--/2026-03-29T09-19-11-732Z_de4c64a6-903e-42a8-93c3-96a817e7a080.jsonl",
     "persistAcrossSessions": false,
-    "startedAt": 1774778052676,
+    "startedAt": 1774788862605,
     "processType": "server",
     "group": null,
     "readyPattern": null,
     "readyPort": null,
-    "pid": 98086
+    "pid": 5805
+  },
+  {
+    "id": "f210b81e",
+    "label": "gradio-web",
+    "command": "cd /Users/youngchanlee/test/tts/Qwen3-TTS-Mac-GeneLab && PYTHONUNBUFFERED=1 .venv/bin/python -m silence_cutter.app 2>&1",
+    "cwd": "/Users/youngchanlee/test/tts/Qwen3-TTS-Mac-GeneLab",
+    "ownerSessionFile": "/Users/youngchanlee/.gsd/sessions/--Users-youngchanlee-test-tts-Qwen3-TTS-Mac-GeneLab--/2026-03-29T09-19-11-732Z_de4c64a6-903e-42a8-93c3-96a817e7a080.jsonl",
+    "persistAcrossSessions": false,
+    "startedAt": 1774789846804,
+    "processType": "server",
+    "group": null,
+    "readyPattern": "Running on",
+    "readyPort": null,
+    "pid": 6071
   }
 ]

@@ -161,8 +161,11 @@ struct ContentView: View {
         switch format {
         case .srt:
             panel.allowedContentTypes = [.plainText]
-        case .fcpxml, .itt:
+        case .fcpxml:
             panel.allowedContentTypes = [.xml]
+        case .itt:
+            // iTT uses .itt extension — allow any file type so NSSavePanel respects the extension
+            panel.allowedContentTypes = [.data]
         }
 
         // Default filename from video name + format extension
@@ -195,7 +198,7 @@ struct ContentView: View {
                     videoURL: videoModel.videoURL ?? URL(fileURLWithPath: "/unknown")
                 )
             case .itt:
-                content = ExportService.generateITT(segments: analysisService.segments)
+                content = ExportService.generateITT(segments: analysisService.segments, fps: analysisService.videoInfo?.fps ?? 24.0)
             }
 
             do {

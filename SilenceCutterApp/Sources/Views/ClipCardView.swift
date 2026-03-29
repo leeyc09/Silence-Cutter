@@ -7,6 +7,7 @@ struct ClipCardView: View {
     @Binding var segment: Segment
     var onSeek: (TimeInterval) -> Void
     var onSplit: () -> Void
+    var onSplitAtWord: ((Int) -> Void)? = nil
     var onMerge: (() -> Void)?
     var isActive: Bool = false
 
@@ -22,43 +23,11 @@ struct ClipCardView: View {
 
     private var keptCard: some View {
         VStack(alignment: .leading, spacing: 6) {
-            // Header: clip number + time range + seek + checkbox
-            HStack(spacing: 6) {
-                Text("클립 \(index + 1)")
-                    .font(.caption2.bold())
-                    .foregroundStyle(.secondary)
-
-                Spacer()
-
-                TimeField(seconds: $segment.start)
-                Text("–")
-                    .font(.caption.monospaced())
-                    .foregroundStyle(.tertiary)
-                TimeField(seconds: $segment.end)
-
-                Button {
-                    onSeek(segment.start)
-                } label: {
-                    Image(systemName: "play.fill")
-                        .font(.caption2)
-                        .foregroundStyle(.cyan)
-                }
-                .buttonStyle(.plain)
-
-                Toggle("", isOn: $segment.isKept)
-                    .toggleStyle(.checkbox)
-                    .labelsHidden()
+            headerSection
+            if !segment.words.isEmpty {
+                videoEditSection
             }
-
-            // Body: word flow or text field
-            if segment.words.isEmpty {
-                TextField("자막 텍스트", text: $segment.text, axis: .vertical)
-                    .font(.body)
-                    .lineLimit(1...8)
-                    .textFieldStyle(.plain)
-            } else {
-                WordFlowView(words: $segment.words)
-            }
+            subtitleEditSection
         }
         .padding(10)
         .background(
@@ -74,6 +43,84 @@ struct ClipCardView: View {
             if let onMerge {
                 Button("다음 클립과 병합") { onMerge() }
             }
+        }
+    }
+
+    // MARK: - Header
+
+    private var headerSection: some View {
+        HStack(spacing: 6) {
+            Text("클립 \(index + 1)")
+                .font(.caption2.bold())
+                .foregroundStyle(.secondary)
+
+            Spacer()
+
+            TimeField(seconds: $segment.start)
+            Text("–")
+                .font(.caption.monospaced())
+                .foregroundStyle(.tertiary)
+            TimeField(seconds: $segment.end)
+
+            Button {
+                onSeek(segment.start)
+            } label: {
+                Image(systemName: "play.fill")
+                    .font(.caption2)
+                    .foregroundStyle(.cyan)
+            }
+            .buttonStyle(.plain)
+
+            Toggle("", isOn: $segment.isKept)
+                .toggleStyle(.checkbox)
+                .labelsHidden()
+        }
+    }
+
+    // MARK: - Video edit section
+
+    private var videoEditSection: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack(spacing: 4) {
+                Image(systemName: "film")
+                    .font(.caption2)
+                    .foregroundStyle(.tertiary)
+                Text("영상편집")
+                    .font(.caption2)
+                    .foregroundStyle(.tertiary)
+            }
+            WordFlowView(words: $segment.words, onSplitAt: onSplitAtWord)
+        }
+    }
+
+    // MARK: - Subtitle edit section
+
+    private var subtitleEditSection: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack(spacing: 4) {
+                Image(systemName: "text.quote")
+                    .font(.caption2)
+                    .foregroundStyle(.cyan.opacity(0.7))
+                Text("자막수정")
+                    .font(.caption2)
+                    .foregroundStyle(.cyan.opacity(0.7))
+            }
+            TextField("자막 텍스트", text: $segment.text, axis: .vertical)
+                .font(.body)
+                .lineLimit(1...5)
+                .textFieldStyle(.plain)
+                .padding(6)
+                .background(
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(Color.white.opacity(0.03))
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 4)
+                        .stroke(Color.cyan.opacity(0.3), lineWidth: 1)
+                )
+                .onChange(of: segment.text) { _, newText in
+                    syncWordsFromText(newText)
+                }
         }
     }
 
@@ -112,6 +159,36 @@ struct ClipCardView: View {
             RoundedRectangle(cornerRadius: 6)
                 .stroke(Color.white.opacity(0.05), lineWidth: 1)
         )
+    }
+
+    // MARK: - Helpers
+
+    private func syncWordsFromText(_ newText: String) {
+        guard !segment.words.isEmpty else { return }
+        let newWords = newText.split(separator: " ", omittingEmptySubsequences: true).map(String.init)
+        let oldWords = segment.words
+
+        if newWords.count == oldWords.count {
+            for i in newWords.indices {
+                if segment.words[i].text != newWords[i] {
+                    segment.words[i] = Word(
+                        id: oldWords[i].id,
+                        text: newWords[i],
+                        start: oldWords[i].start,
+                        end: oldWords[i].end,
+                        isKept: oldWords[i].isKept
+                    )
+                }
+            }
+        } else {
+            let totalStart = oldWords.first?.start ?? segment.start
+            let totalEnd = oldWords.last?.end ?? segment.end
+            let totalDur = totalEnd - totalStart
+            let wordDur = newWords.isEmpty ? 0 : totalDur / Double(newWords.count)
+            segment.words = newWords.enumerated().map { i, text in
+                Word(text: text, start: totalStart + Double(i) * wordDur, end: totalStart + Double(i + 1) * wordDur)
+            }
+        }
     }
 }
 

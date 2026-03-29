@@ -34,6 +34,9 @@ struct TranscriptEditorView: View {
                                 onSplit: {
                                     analysisService.splitSegment(at: index)
                                 },
+                                onSplitAtWord: { wordIndex in
+                                    analysisService.splitSegment(at: index, wordIndex: wordIndex)
+                                },
                                 onMerge: index < analysisService.segments.count - 1 ? {
                                     analysisService.mergeWithNext(at: index)
                                 } : nil,

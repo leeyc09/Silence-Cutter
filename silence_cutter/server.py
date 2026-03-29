@@ -204,7 +204,10 @@ def handle_analyze(params: dict) -> dict:
             },
         }
 
-    asr_segments = split_long_speech_segments(audio_path, speech_segments)
+    asr_segments = split_long_speech_segments(
+        audio_path, speech_segments,
+        max_segment_seconds=params.get("max_segment_seconds", 15.0),
+    )
 
     # 4. ASR
     _progress("analyze", 25, "음성 인식 시작")

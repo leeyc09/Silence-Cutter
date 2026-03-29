@@ -5,23 +5,38 @@ import SwiftUI
 struct WordFlowView: View {
     @Binding var words: [Word]
     var disabled: Bool = false
+    var onSplitAt: ((Int) -> Void)? = nil
 
     var body: some View {
         FlowLayout(spacing: 4) {
             ForEach(Array(words.enumerated()), id: \.element.id) { index, word in
                 Text(word.text)
                     .font(.body)
-                    .padding(.horizontal, 4)
-                    .padding(.vertical, 2)
+                    .padding(.horizontal, 5)
+                    .padding(.vertical, 3)
                     .background(
                         RoundedRectangle(cornerRadius: 4)
-                            .fill(word.isKept ? Color.clear : Color.red.opacity(0.15))
+                            .fill(word.isKept ? Color.white.opacity(0.05) : Color.red.opacity(0.15))
                     )
-                    .strikethrough(!word.isKept)
-                    .opacity(word.isKept ? 1.0 : 0.4)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 4)
+                            .stroke(word.isKept ? Color.white.opacity(0.1) : Color.red.opacity(0.3), lineWidth: 1)
+                    )
+                    .strikethrough(!word.isKept, color: .red)
+                    .foregroundStyle(word.isKept ? .primary : .secondary)
+                    .opacity(word.isKept ? 1.0 : 0.5)
                     .onTapGesture {
                         guard !disabled else { return }
-                        words[index].isKept.toggle()
+                        withAnimation(.easeInOut(duration: 0.15)) {
+                            words[index].isKept.toggle()
+                        }
+                    }
+                    .contextMenu {
+                        if let onSplitAt, index > 0 {
+                            Button("여기서 클립 분할") {
+                                onSplitAt(index)
+                            }
+                        }
                     }
             }
         }
