@@ -162,6 +162,25 @@ _DARK_CSS = """
 .dark-mode-toggle, .light-dark-toggle {
     display: none !important;
 }
+/* 프로그레스 바가 status-box를 덮지 않도록 위치 조정 */
+.progress-bar {
+    position: relative !important;
+    z-index: 10 !important;
+}
+.status-box {
+    margin-top: 8px !important;
+}
+.status-box .wrap {
+    position: relative !important;
+    inset: unset !important;
+    transform: none !important;
+    background: transparent !important;
+    padding: 0 !important;
+}
+.status-box .progress-bar {
+    position: relative !important;
+    margin-bottom: 8px !important;
+}
 """
 
 
