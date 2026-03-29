@@ -64,6 +64,10 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/youngchanlee/test/tts/Qwen3-TTS-Mac-GeneLab/SilenceCutterApp/Sources/Views/TimelineBarView.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/youngchanlee/test/tts/Qwen3-TTS-Mac-GeneLab/SilenceCutterApp/Sources/Views/TranscriptEditorView.swift"
         },
         {
@@ -93,6 +97,7 @@
         "/Users/youngchanlee/test/tts/Qwen3-TTS-Mac-GeneLab/SilenceCutterApp/.build/arm64-apple-macosx/debug/SilenceCutterApp.build/Word.swift.o",
         "/Users/youngchanlee/test/tts/Qwen3-TTS-Mac-GeneLab/SilenceCutterApp/.build/arm64-apple-macosx/debug/SilenceCutterApp.build/PythonBridge.swift.o",
         "/Users/youngchanlee/test/tts/Qwen3-TTS-Mac-GeneLab/SilenceCutterApp/.build/arm64-apple-macosx/debug/SilenceCutterApp.build/AnalysisProgressView.swift.o",
+        "/Users/youngchanlee/test/tts/Qwen3-TTS-Mac-GeneLab/SilenceCutterApp/.build/arm64-apple-macosx/debug/SilenceCutterApp.build/TimelineBarView.swift.o",
         "/Users/youngchanlee/test/tts/Qwen3-TTS-Mac-GeneLab/SilenceCutterApp/.build/arm64-apple-macosx/debug/SilenceCutterApp.build/TranscriptEditorView.swift.o",
         "/Users/youngchanlee/test/tts/Qwen3-TTS-Mac-GeneLab/SilenceCutterApp/.build/arm64-apple-macosx/debug/SilenceCutterApp.build/VideoPlayerView.swift.o"
       ],
@@ -195,6 +200,10 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/youngchanlee/test/tts/Qwen3-TTS-Mac-GeneLab/SilenceCutterApp/.build/arm64-apple-macosx/debug/SilenceCutterApp.build/TimelineBarView.swift.o"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/youngchanlee/test/tts/Qwen3-TTS-Mac-GeneLab/SilenceCutterApp/.build/arm64-apple-macosx/debug/SilenceCutterApp.build/TranscriptEditorView.swift.o"
         },
         {
@@ -218,6 +227,7 @@
         "/Users/youngchanlee/test/tts/Qwen3-TTS-Mac-GeneLab/SilenceCutterApp/Sources/Models/Word.swift",
         "/Users/youngchanlee/test/tts/Qwen3-TTS-Mac-GeneLab/SilenceCutterApp/Sources/Services/PythonBridge.swift",
         "/Users/youngchanlee/test/tts/Qwen3-TTS-Mac-GeneLab/SilenceCutterApp/Sources/Views/AnalysisProgressView.swift",
+        "/Users/youngchanlee/test/tts/Qwen3-TTS-Mac-GeneLab/SilenceCutterApp/Sources/Views/TimelineBarView.swift",
         "/Users/youngchanlee/test/tts/Qwen3-TTS-Mac-GeneLab/SilenceCutterApp/Sources/Views/TranscriptEditorView.swift",
         "/Users/youngchanlee/test/tts/Qwen3-TTS-Mac-GeneLab/SilenceCutterApp/Sources/Views/VideoPlayerView.swift"
       ],
@@ -246,6 +256,7 @@
       "/Users/youngchanlee/test/tts/Qwen3-TTS-Mac-GeneLab/SilenceCutterApp/Sources/Models/Word.swift",
       "/Users/youngchanlee/test/tts/Qwen3-TTS-Mac-GeneLab/SilenceCutterApp/Sources/Services/PythonBridge.swift",
       "/Users/youngchanlee/test/tts/Qwen3-TTS-Mac-GeneLab/SilenceCutterApp/Sources/Views/AnalysisProgressView.swift",
+      "/Users/youngchanlee/test/tts/Qwen3-TTS-Mac-GeneLab/SilenceCutterApp/Sources/Views/TimelineBarView.swift",
       "/Users/youngchanlee/test/tts/Qwen3-TTS-Mac-GeneLab/SilenceCutterApp/Sources/Views/TranscriptEditorView.swift",
       "/Users/youngchanlee/test/tts/Qwen3-TTS-Mac-GeneLab/SilenceCutterApp/Sources/Views/VideoPlayerView.swift",
       "-I",
@@ -387,6 +398,10 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/youngchanlee/test/tts/Qwen3-TTS-Mac-GeneLab/SilenceCutterApp/Sources/Views/TimelineBarView.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/youngchanlee/test/tts/Qwen3-TTS-Mac-GeneLab/SilenceCutterApp/Sources/Views/TranscriptEditorView.swift"
         },
         {
@@ -434,6 +449,10 @@
         {
           "kind" : "file",
           "name" : "/Users/youngchanlee/test/tts/Qwen3-TTS-Mac-GeneLab/SilenceCutterApp/.build/arm64-apple-macosx/debug/SilenceCutterApp.build/Segment.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/youngchanlee/test/tts/Qwen3-TTS-Mac-GeneLab/SilenceCutterApp/.build/arm64-apple-macosx/debug/SilenceCutterApp.build/TimelineBarView.swift.o"
         },
         {
           "kind" : "file",

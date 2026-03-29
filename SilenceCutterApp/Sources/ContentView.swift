@@ -63,13 +63,13 @@ struct ContentView: View {
 
                 Divider()
 
-                // Timeline bar placeholder (S05)
-                ZStack {
-                    Rectangle()
-                        .fill(Color(.windowBackgroundColor))
-                    Text("Timeline")
-                        .foregroundStyle(.secondary)
-                }
+                // Timeline bar (S05)
+                TimelineBarView(
+                    segments: analysisService.segments,
+                    duration: videoModel.duration,
+                    currentTime: videoModel.currentTime,
+                    onSeek: { videoModel.seek(to: $0) }
+                )
                 .frame(height: 60)
 
                 Divider()
