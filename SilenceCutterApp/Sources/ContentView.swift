@@ -4,20 +4,45 @@ import UniformTypeIdentifiers
 struct ContentView: View {
     @State private var bridge = PythonBridge()
     @State private var videoModel = VideoPlayerModel()
+    @State private var analysisService = AnalysisService()
     @State private var bridgeStatus: String = ""
     @State private var isTesting = false
 
     var body: some View {
         NavigationSplitView {
-            // Left panel — transcript list (S04)
-            VStack {
+            // Left panel — transcript / analysis
+            VStack(spacing: 0) {
                 Text("Transcript")
                     .font(.headline)
                     .padding(.top)
-                Spacer()
-                Text("영상을 불러오세요")
-                    .foregroundStyle(.secondary)
-                Spacer()
+                    .padding(.bottom, 8)
+
+                Divider()
+
+                if analysisService.isAnalyzing {
+                    AnalysisProgressView(progress: analysisService.progress)
+                } else if !analysisService.segments.isEmpty {
+                    SegmentListView(segments: analysisService.segments)
+                } else {
+                    Spacer()
+                    Text("영상을 불러오세요")
+                        .foregroundStyle(.secondary)
+                    Spacer()
+                }
+
+                // Inline error display
+                if let errorMsg = analysisService.error {
+                    HStack(spacing: 4) {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .foregroundStyle(.yellow)
+                        Text(errorMsg)
+                            .lineLimit(3)
+                    }
+                    .font(.caption)
+                    .foregroundStyle(.red)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                }
 
                 // Bridge diagnostics
                 if !bridgeStatus.isEmpty {
@@ -70,9 +95,12 @@ struct ContentView: View {
 
                     Spacer()
                     Button("분석 시작") {
-                        // Analyze (S03)
+                        Task {
+                            guard let url = videoModel.videoURL else { return }
+                            await analysisService.analyze(videoURL: url)
+                        }
                     }
-                    .disabled(true)
+                    .disabled(videoModel.videoURL == nil || analysisService.isAnalyzing)
                     Spacer()
                     Menu("내보내기") {
                         ForEach(ExportFormat.allCases) { format in
