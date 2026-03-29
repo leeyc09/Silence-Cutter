@@ -28,7 +28,7 @@ struct VideoPreviewView: View {
 
     /// Accepted video file extensions for drag-and-drop.
     private static let videoExtensions: Set<String> = [
-        "mp4", "mov", "m4v", "avi", "mkv"
+        "mp4", "mov", "m4v", "avi", "mkv", "mp3", "wav", "m4a", "aac", "flac", "ogg", "webm"
     ]
 
     var body: some View {

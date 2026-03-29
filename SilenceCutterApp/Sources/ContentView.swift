@@ -89,7 +89,7 @@ struct ContentView: View {
                 HStack(spacing: 12) {
                     Button {
                         let panel = NSOpenPanel()
-                        panel.allowedContentTypes = [.movie, .mpeg4Movie, .quickTimeMovie]
+                        panel.allowedContentTypes = [.movie, .mpeg4Movie, .quickTimeMovie, .audio, .mp3, .mpeg4Audio, .wav, .aiff]
                         panel.allowsMultipleSelection = false
                         panel.begin { response in
                             if response == .OK, let url = panel.url {
