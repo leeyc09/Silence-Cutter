@@ -143,6 +143,7 @@ struct ExportService {
         hasVideo="1" hasAudio="1" format="\(formatId)">
               <media-rep kind="original-media" src="\(videoURL.absoluteString)"/>
             </asset>
+            <effect id="r3" name="Basic Title" uid=".../Titles.localized/Bumper:Opener.localized/Basic Title.localized/Basic Title.moti"/>
           </resources>
           <library>
             <event name="SilenceCutter Export">
@@ -154,7 +155,8 @@ struct ExportService {
         """
 
         var offset = (0, 1)
-        for seg in kept {
+        var tsCounter = 0
+        for (_, seg) in kept.enumerated() {
             let srcStart = snapToFrame(seconds: seg.start, frameNum: frameNum, frameDen: frameDen)
             let srcEnd = snapToFrame(seconds: seg.end, frameNum: frameNum, frameDen: frameDen)
             let clipDur = subRational(srcEnd, srcStart)
@@ -163,14 +165,82 @@ struct ExportService {
 
             let clipName = xmlEscape(String(seg.exportText.prefix(30)))
 
-            xml += """
-                        <asset-clip ref="\(assetId)" \
-            offset="\(rationalStr(offset))" \
-            name="\(clipName)" \
-            start="\(rationalStr(srcStart))" \
-            duration="\(rationalStr(clipDur))" \
-            tcFormat="NDF"/>\n
-            """
+            // Build subtitle titles inside asset-clip
+            let subtitleText = seg.exportText
+            let subtitleChunks = splitSubtitle(subtitleText, maxChars: 20)
+
+            if subtitleChunks.isEmpty || subtitleText.isEmpty {
+                // No subtitle — self-closing asset-clip
+                xml += """
+                            <asset-clip ref="\(assetId)" \
+                offset="\(rationalStr(offset))" \
+                name="\(clipName)" \
+                start="\(rationalStr(srcStart))" \
+                duration="\(rationalStr(clipDur))" \
+                tcFormat="NDF"/>\n
+                """
+            } else {
+                // Asset-clip with subtitle titles
+                xml += """
+                            <asset-clip ref="\(assetId)" \
+                offset="\(rationalStr(offset))" \
+                name="\(clipName)" \
+                start="\(rationalStr(srcStart))" \
+                duration="\(rationalStr(clipDur))" \
+                tcFormat="NDF">\n
+                """
+
+                // Distribute subtitle chunks across clip duration
+                let chunkCount = subtitleChunks.count
+                for (ci, chunk) in subtitleChunks.enumerated() {
+                    tsCounter += 1
+                    let tsId = "ts\(tsCounter)"
+
+                    // Distribute chunks evenly across the clip using words timing if available
+                    let chunkStartFrac: Double
+                    let chunkEndFrac: Double
+                    if seg.words.count >= chunkCount {
+                        // Use word timing for chunk boundaries
+                        let wordsPerChunk = seg.words.count / chunkCount
+                        let startWordIdx = ci * wordsPerChunk
+                        let endWordIdx = min((ci + 1) * wordsPerChunk, seg.words.count) - 1
+                        chunkStartFrac = seg.words[startWordIdx].start
+                        chunkEndFrac = seg.words[endWordIdx].end
+                    } else {
+                        // Even distribution
+                        let segDur = seg.end - seg.start
+                        chunkStartFrac = seg.start + segDur * Double(ci) / Double(chunkCount)
+                        chunkEndFrac = seg.start + segDur * Double(ci + 1) / Double(chunkCount)
+                    }
+
+                    var chunkStart = snapToFrame(seconds: chunkStartFrac, frameNum: frameNum, frameDen: frameDen)
+                    var chunkEnd = snapToFrame(seconds: chunkEndFrac, frameNum: frameNum, frameDen: frameDen)
+
+                    // Clamp to clip boundaries
+                    if chunkStart.0 * srcStart.1 < srcStart.0 * chunkStart.1 { chunkStart = srcStart }
+                    if chunkEnd.0 * srcEnd.1 > srcEnd.0 * chunkEnd.1 { chunkEnd = srcEnd }
+
+                    let chunkDur = subRational(chunkEnd, chunkStart)
+                    guard chunkDur.0 > 0 else { continue }
+
+                    let escapedChunk = xmlEscape(chunk)
+
+                    xml += """
+                                <title ref="r3" lane="1" \
+                    offset="\(rationalStr(chunkStart))" \
+                    name="\(escapedChunk)" \
+                    start="3600s" \
+                    duration="\(rationalStr(chunkDur))">
+                                  <text><text-style ref="\(tsId)">\(escapedChunk)</text-style></text>
+                                  <text-style-def id="\(tsId)">
+                                    <text-style font="Helvetica" fontSize="42" fontColor="1 1 1 1" bold="1" shadowColor="0 0 0 0.75" shadowOffset="3 315" alignment="center"/>
+                                  </text-style-def>
+                                </title>\n
+                    """
+                }
+
+                xml += "                </asset-clip>\n"
+            }
             offset = addRational(offset, clipDur)
         }
 
@@ -266,5 +336,31 @@ struct ExportService {
             .replacingOccurrences(of: "<", with: "&lt;")
             .replacingOccurrences(of: ">", with: "&gt;")
             .replacingOccurrences(of: "\"", with: "&quot;")
+    }
+
+    // MARK: - Subtitle splitting
+
+    /// Split subtitle text into chunks of maxChars, preferring natural break points.
+    private static func splitSubtitle(_ text: String, maxChars: Int = 20) -> [String] {
+        guard !text.isEmpty else { return [] }
+        guard text.count > maxChars else { return [text] }
+
+        let words = text.split(separator: " ", omittingEmptySubsequences: true).map(String.init)
+        var chunks: [String] = []
+        var current = ""
+
+        for word in words {
+            let candidate = current.isEmpty ? word : "\(current) \(word)"
+            if candidate.count > maxChars && !current.isEmpty {
+                chunks.append(current)
+                current = word
+            } else {
+                current = candidate
+            }
+        }
+        if !current.isEmpty {
+            chunks.append(current)
+        }
+        return chunks
     }
 }
