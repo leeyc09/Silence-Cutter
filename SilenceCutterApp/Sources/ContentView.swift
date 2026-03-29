@@ -22,7 +22,7 @@ struct ContentView: View {
                 if analysisService.isAnalyzing {
                     AnalysisProgressView(progress: analysisService.progress)
                 } else if !analysisService.segments.isEmpty {
-                    SegmentListView(segments: analysisService.segments)
+                    TranscriptEditorView(analysisService: analysisService, onSeek: { videoModel.seek(to: $0) })
                 } else {
                     Spacer()
                     Text("영상을 불러오세요")
