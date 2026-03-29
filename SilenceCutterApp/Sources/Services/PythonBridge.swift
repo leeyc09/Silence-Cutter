@@ -170,6 +170,7 @@ final class PythonBridge {
     private var readTask: Task<Void, Never>?
 
     /// Path to the Python interpreter. Defaults to system `python3`.
+    /// Overridden at start() to prefer .venv/bin/python if available.
     var pythonPath: String = "/usr/bin/python3"
 
     /// Path to the project root (parent of `silence_cutter/`).
@@ -181,6 +182,12 @@ final class PythonBridge {
     /// Start the Python JSON-RPC subprocess.
     func start() throws {
         guard !isRunning else { return }
+
+        // Prefer .venv/bin/python in projectRoot if it exists.
+        let venvPython = (projectRoot as NSString).appendingPathComponent(".venv/bin/python")
+        if FileManager.default.isExecutableFile(atPath: venvPython) {
+            pythonPath = venvPython
+        }
 
         let proc = Process()
         let stdin = Pipe()

@@ -1,4 +1,5 @@
 import SwiftUI
+import AppKit
 import Foundation
 
 /// Check if `--test-bridge` was passed on the command line.
@@ -11,6 +12,13 @@ private let isTestAnalyzeMode = CommandLine.arguments.contains("--test-analyze")
 
 @main
 struct SilenceCutterApp: App {
+    init() {
+        // Swift Package executables default to accessory activation policy,
+        // which prevents the app from appearing in the Dock and receiving focus.
+        NSApplication.shared.setActivationPolicy(.regular)
+        NSApplication.shared.activate(ignoringOtherApps: true)
+    }
+
     var body: some Scene {
         WindowGroup {
             if isTestBridgeMode {

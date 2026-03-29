@@ -21,22 +21,21 @@ struct TranscriptEditorView: View {
                         .labelsHidden()
 
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("\(formatTime(segment.start)) – \(formatTime(segment.end))")
-                            .font(.caption.monospaced())
-                            .foregroundStyle(.secondary)
-
                         Button {
                             onSeek(segment.start)
                         } label: {
-                            Text(segment.text)
-                                .font(.body)
-                                .lineLimit(3)
-                                .multilineTextAlignment(.leading)
-                                .strikethrough(!segment.isKept)
-                                .frame(maxWidth: .infinity, alignment: .leading)
+                            Text("\(formatTime(segment.start)) – \(formatTime(segment.end))")
+                                .font(.caption.monospaced())
+                                .foregroundStyle(.secondary)
                                 .contentShape(Rectangle())
                         }
                         .buttonStyle(.plain)
+
+                        TextField("자막 텍스트", text: $analysisService.segments[index].text, axis: .vertical)
+                            .font(.body)
+                            .lineLimit(1...5)
+                            .textFieldStyle(.plain)
+                            .strikethrough(!segment.isKept)
                     }
                 }
                 .padding(.vertical, 2)

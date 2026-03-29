@@ -58,7 +58,7 @@ struct ContentView: View {
             // Right panel — video preview + timeline
             VStack(spacing: 0) {
                 // Video player (S02)
-                VideoPlayerView(model: videoModel)
+                VideoPreviewView(model: videoModel)
                     .frame(maxHeight: .infinity)
 
                 Divider()
