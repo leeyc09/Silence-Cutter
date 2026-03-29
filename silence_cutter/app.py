@@ -366,17 +366,19 @@ def run_silence_cut(
     min_silence_ms: int,
     max_subtitle_chars: int,
     font_size: int,
+    export_format: str,
     export_itt: bool,
     project_name: str,
     progress=gr.Progress(),
 ) -> tuple[list[str] | None, str]:
-    """전체 파이프라인 실행 → 생성된 FCPXML (+ iTT) 반환. 단일/멀티 영상 자동 처리."""
+    """전체 파이프라인 실행 → 생성된 FCPXML/FCP7 XML (+ iTT) 반환. 단일/멀티 영상 자동 처리."""
     if video_files is None or (isinstance(video_files, list) and len(video_files) == 0):
         yield None, "오류: 영상 파일을 업로드해 주세요."
         return
 
     from . import pipeline as _pipeline
     from .fcpxml import VideoSegments, generate_fcpxml, generate_fcpxml_multi
+    from .capcut import generate_capcut_xml, generate_capcut_xml_multi
     from .itt import generate_itt
     from .transcribe import Transcriber, TranscribedSegment, WordTimestamp
     from .vad import detect_speech, extract_audio, split_long_speech_segments
@@ -574,28 +576,50 @@ def run_silence_cut(
             return
 
         output_files: list[Path] = []
+        is_capcut = "CapCut" in export_format
+
         if not is_multi and len(all_videos) == 1:
             video = all_videos[0]
-            output_path = tmp_dir / f"{video.video_path.stem}.fcpxml"
 
-            phase = "FCPXML 생성"
-            progress(0.85, desc="FCPXML 생성")
-            log(f"FCPXML 생성 시작: {output_path.name}")
-            yield emit()
-            generate_fcpxml(
-                segments=video.segments,
-                video_path=video.video_path,
-                output_path=output_path,
-                fps=video.fps,
-                width=video.width,
-                height=video.height,
-                video_duration=video.duration,
-                project_name=params["project_name"],
-                font_size=int(font_size),
-                max_subtitle_chars=int(max_subtitle_chars),
-            )
+            if is_capcut:
+                output_path = tmp_dir / f"{video.video_path.stem}.xml"
+                phase = "CapCut XML 생성"
+                progress(0.85, desc="CapCut XML 생성")
+                log(f"CapCut XML 생성 시작: {output_path.name}")
+                yield emit()
+                generate_capcut_xml(
+                    segments=video.segments,
+                    video_path=video.video_path,
+                    output_path=output_path,
+                    fps=video.fps,
+                    width=video.width,
+                    height=video.height,
+                    video_duration=video.duration,
+                    project_name=params["project_name"],
+                    font_size=int(font_size),
+                    max_subtitle_chars=int(max_subtitle_chars),
+                )
+            else:
+                output_path = tmp_dir / f"{video.video_path.stem}.fcpxml"
+                phase = "FCPXML 생성"
+                progress(0.85, desc="FCPXML 생성")
+                log(f"FCPXML 생성 시작: {output_path.name}")
+                yield emit()
+                generate_fcpxml(
+                    segments=video.segments,
+                    video_path=video.video_path,
+                    output_path=output_path,
+                    fps=video.fps,
+                    width=video.width,
+                    height=video.height,
+                    video_duration=video.duration,
+                    project_name=params["project_name"],
+                    font_size=int(font_size),
+                    max_subtitle_chars=int(max_subtitle_chars),
+                )
+
             output_files.append(output_path)
-            log(f"FCPXML 생성 완료: {output_path.name}")
+            log(f"{'CapCut XML' if is_capcut else 'FCPXML'} 생성 완료: {output_path.name}")
             yield emit()
 
             if export_itt:
@@ -614,21 +638,35 @@ def run_silence_cut(
                 log(f"iTT 생성 완료: {itt_path.name}")
                 yield emit()
         else:
-            output_path = tmp_dir / f"{params['project_name']}_multi.fcpxml"
+            if is_capcut:
+                output_path = tmp_dir / f"{params['project_name']}_multi.xml"
+                phase = "멀티 CapCut XML 생성"
+                progress(0.85, desc="멀티 CapCut XML 생성")
+                log(f"멀티 CapCut XML 생성 시작: {output_path.name}")
+                yield emit()
+                generate_capcut_xml_multi(
+                    videos=all_videos,
+                    output_path=output_path,
+                    project_name=params["project_name"],
+                    font_size=int(font_size),
+                    max_subtitle_chars=int(max_subtitle_chars),
+                )
+            else:
+                output_path = tmp_dir / f"{params['project_name']}_multi.fcpxml"
+                phase = "멀티 FCPXML 생성"
+                progress(0.85, desc="멀티 FCPXML 생성")
+                log(f"멀티 FCPXML 생성 시작: {output_path.name}")
+                yield emit()
+                generate_fcpxml_multi(
+                    videos=all_videos,
+                    output_path=output_path,
+                    project_name=params["project_name"],
+                    font_size=int(font_size),
+                    max_subtitle_chars=int(max_subtitle_chars),
+                )
 
-            phase = "멀티 FCPXML 생성"
-            progress(0.85, desc="멀티 FCPXML 생성")
-            log(f"멀티 FCPXML 생성 시작: {output_path.name}")
-            yield emit()
-            generate_fcpxml_multi(
-                videos=all_videos,
-                output_path=output_path,
-                project_name=params["project_name"],
-                font_size=int(font_size),
-                max_subtitle_chars=int(max_subtitle_chars),
-            )
             output_files.append(output_path)
-            log(f"멀티 FCPXML 생성 완료: {output_path.name}")
+            log(f"{'멀티 CapCut XML' if is_capcut else '멀티 FCPXML'} 생성 완료: {output_path.name}")
             yield emit()
 
             if export_itt:
@@ -660,7 +698,10 @@ def run_silence_cut(
         phase = "완료"
         progress(1.0, desc="완료")
         progress_label = None
-        log("Final Cut Pro에서 File > Import > XML로 열 수 있습니다.")
+        if is_capcut:
+            log("CapCut에서 File > Import > XML로 열 수 있습니다.")
+        else:
+            log("Final Cut Pro에서 File > Import > XML로 열 수 있습니다.")
         gr.Info("✅ 처리 완료! 출력 파일을 다운로드하세요.")
         yield emit(output_files)
         return
@@ -1197,7 +1238,7 @@ def build_ui() -> gr.Blocks:
 
         gr.Markdown(
             "# Silence Cutter\n"
-            "**Final Cut Pro용 무음 자동 편집 도구** — Silero VAD + Qwen3-ASR"
+            "**Final Cut Pro / CapCut용 무음 자동 편집 도구** — Silero VAD + Qwen3-ASR"
         )
 
         # ── 메인 탭: 무음 컷 ──────────────────────────────────────────────
@@ -1219,6 +1260,11 @@ def build_ui() -> gr.Blocks:
                         choices=list(ASR_MODELS.keys()),
                         value=list(ASR_MODELS.keys())[0],
                         label="ASR 모델",
+                    )
+                    t1_export_format = gr.Dropdown(
+                        choices=["Final Cut Pro (FCPXML)", "CapCut (FCP7 XML)"],
+                        value="Final Cut Pro (FCPXML)",
+                        label="내보내기 형식",
                     )
 
                     with gr.Accordion("고급 설정", open=False):
@@ -1300,6 +1346,7 @@ def build_ui() -> gr.Blocks:
                     t1_min_silence,
                     t1_max_chars,
                     t1_font_size,
+                    t1_export_format,
                     t1_export_itt,
                     t1_project_name,
                 ],
