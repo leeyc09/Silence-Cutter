@@ -140,7 +140,7 @@ def handle_analyze(params: dict) -> dict:
     import subprocess as _sp
 
     from .vad import extract_audio, detect_speech, split_long_speech_segments
-    from .transcribe import Transcriber, merge_orphan_josa
+    from .transcribe import Transcriber, TranscribedSegment, merge_orphan_josa
 
     # 1. probe
     _progress("analyze", 0, "영상 정보 분석 중")
@@ -209,7 +209,8 @@ def handle_analyze(params: dict) -> dict:
         max_segment_seconds=params.get("max_segment_seconds", 15.0),
     )
 
-    # 4. ASR
+    # 4. ASR — 세그먼트에 overlap padding 적용 후 전사
+    #    분할 경계에서 단어가 잘리지 않도록 인접 세그먼트와 0.5초 겹침.
     _progress("analyze", 25, "음성 인식 시작")
     transcriber = Transcriber(
         asr_model=params.get("asr_model", "mlx-community/Qwen3-ASR-0.6B-8bit"),
@@ -218,13 +219,33 @@ def handle_analyze(params: dict) -> dict:
         on_progress=lambda phase, pct, detail: _progress(phase, pct, detail),
     )
 
+    OVERLAP = 0.5  # 초 — 각 세그먼트 경계에 추가할 여유
     results = []
     total = len(asr_segments)
     for i, seg in enumerate(asr_segments):
         pct = 25 + int(70 * (i / total))
         _progress("analyze", pct, f"전사 중 ({i + 1}/{total})")
-        result = transcriber.transcribe_segment(audio_path, seg.start, seg.end)
-        if result.text:
+
+        # overlap 적용: 시작을 조금 앞으로, 끝을 조금 뒤로
+        padded_start = max(0, seg.start - (OVERLAP if i > 0 else 0))
+        padded_end = seg.end + (OVERLAP if i < total - 1 else 0)
+        result = transcriber.transcribe_segment(audio_path, padded_start, padded_end)
+
+        if result.text and result.words:
+            # overlap 구간의 단어 제거: 원래 seg.start ~ seg.end 범위만 남김
+            trimmed_words = [
+                w for w in result.words
+                if w.start >= seg.start - 0.05 and w.end <= seg.end + 0.05
+            ]
+            if trimmed_words:
+                trimmed_text = " ".join(w.text for w in trimmed_words)
+                results.append(TranscribedSegment(
+                    seg_start=trimmed_words[0].start,
+                    seg_end=trimmed_words[-1].end,
+                    text=trimmed_text,
+                    words=trimmed_words,
+                ))
+        elif result.text:
             results.append(result)
 
     # 세그먼트 경계에서 분리된 조사를 이전 세그먼트로 병합
