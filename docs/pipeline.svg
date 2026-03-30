@@ -1,0 +1,118 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 520">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f172a"/>
+      <stop offset="100%" style="stop-color:#1e293b"/>
+    </linearGradient>
+    <linearGradient id="blue" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#3b82f6"/>
+      <stop offset="100%" style="stop-color:#2563eb"/>
+    </linearGradient>
+    <linearGradient id="green" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#22c55e"/>
+      <stop offset="100%" style="stop-color:#16a34a"/>
+    </linearGradient>
+    <linearGradient id="purple" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#a855f7"/>
+      <stop offset="100%" style="stop-color:#7c3aed"/>
+    </linearGradient>
+    <linearGradient id="orange" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#f97316"/>
+      <stop offset="100%" style="stop-color:#ea580c"/>
+    </linearGradient>
+    <linearGradient id="cyan" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#06b6d4"/>
+      <stop offset="100%" style="stop-color:#0891b2"/>
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="120%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.3"/>
+    </filter>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#475569"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="900" height="520" rx="12" fill="url(#bg)"/>
+
+  <!-- Title -->
+  <text x="450" y="42" text-anchor="middle" fill="#e2e8f0" font-family="system-ui,sans-serif" font-size="18" font-weight="700">Processing Pipeline</text>
+
+  <!-- Step 1: Video Input -->
+  <rect x="40" y="75" width="160" height="70" rx="12" fill="url(#blue)" filter="url(#shadow)"/>
+  <text x="120" y="103" text-anchor="middle" fill="white" font-family="system-ui,sans-serif" font-size="22">🎬</text>
+  <text x="120" y="128" text-anchor="middle" fill="white" font-family="system-ui,sans-serif" font-size="13" font-weight="600">영상 입력</text>
+
+  <!-- Arrow 1→2 -->
+  <path d="M200,110 L250,110" stroke="#475569" stroke-width="2.5" fill="none" marker-end="url(#arrowhead)"/>
+
+  <!-- Step 2: Audio Extract -->
+  <rect x="260" y="75" width="160" height="70" rx="12" fill="url(#cyan)" filter="url(#shadow)"/>
+  <text x="340" y="103" text-anchor="middle" fill="white" font-family="system-ui,sans-serif" font-size="22">🔊</text>
+  <text x="340" y="128" text-anchor="middle" fill="white" font-family="system-ui,sans-serif" font-size="13" font-weight="600">오디오 추출</text>
+  <text x="340" y="162" text-anchor="middle" fill="#94a3b8" font-family="system-ui,sans-serif" font-size="11">ffmpeg → 16kHz WAV</text>
+
+  <!-- Arrow 2→3 -->
+  <path d="M420,110 L470,110" stroke="#475569" stroke-width="2.5" fill="none" marker-end="url(#arrowhead)"/>
+
+  <!-- Step 3: VAD -->
+  <rect x="480" y="75" width="160" height="70" rx="12" fill="url(#green)" filter="url(#shadow)"/>
+  <text x="560" y="103" text-anchor="middle" fill="white" font-family="system-ui,sans-serif" font-size="22">🎯</text>
+  <text x="560" y="128" text-anchor="middle" fill="white" font-family="system-ui,sans-serif" font-size="13" font-weight="600">음성 감지 (VAD)</text>
+  <text x="560" y="162" text-anchor="middle" fill="#94a3b8" font-family="system-ui,sans-serif" font-size="11">Silero VAD</text>
+
+  <!-- Arrow 3→4 -->
+  <path d="M640,110 L690,110" stroke="#475569" stroke-width="2.5" fill="none" marker-end="url(#arrowhead)"/>
+
+  <!-- Step 4: ASR -->
+  <rect x="700" y="75" width="160" height="70" rx="12" fill="url(#purple)" filter="url(#shadow)"/>
+  <text x="780" y="103" text-anchor="middle" fill="white" font-family="system-ui,sans-serif" font-size="22">🗣️</text>
+  <text x="780" y="128" text-anchor="middle" fill="white" font-family="system-ui,sans-serif" font-size="13" font-weight="600">음성 인식 (ASR)</text>
+  <text x="780" y="162" text-anchor="middle" fill="#94a3b8" font-family="system-ui,sans-serif" font-size="11">Qwen3-ASR (MLX)</text>
+
+  <!-- Arrow 4→5 (down) -->
+  <path d="M780,145 L780,210 L670,210" stroke="#475569" stroke-width="2.5" fill="none" marker-end="url(#arrowhead)"/>
+
+  <!-- Step 5: Word Alignment -->
+  <rect x="480" y="185" width="180" height="70" rx="12" fill="url(#purple)" filter="url(#shadow)" opacity="0.9"/>
+  <text x="570" y="213" text-anchor="middle" fill="white" font-family="system-ui,sans-serif" font-size="22">⏱️</text>
+  <text x="570" y="238" text-anchor="middle" fill="white" font-family="system-ui,sans-serif" font-size="13" font-weight="600">단어 타임스탬프</text>
+  <text x="570" y="272" text-anchor="middle" fill="#94a3b8" font-family="system-ui,sans-serif" font-size="11">Qwen3-ForcedAligner</text>
+
+  <!-- Arrow 5→6 (down) -->
+  <path d="M570,255 L570,310" stroke="#475569" stroke-width="2.5" fill="none" marker-end="url(#arrowhead)"/>
+
+  <!-- Step 6: Subtitle Split -->
+  <rect x="480" y="320" width="180" height="70" rx="12" fill="url(#orange)" filter="url(#shadow)"/>
+  <text x="570" y="348" text-anchor="middle" fill="white" font-family="system-ui,sans-serif" font-size="22">✂️</text>
+  <text x="570" y="373" text-anchor="middle" fill="white" font-family="system-ui,sans-serif" font-size="13" font-weight="600">자막 분할</text>
+  <text x="570" y="407" text-anchor="middle" fill="#94a3b8" font-family="system-ui,sans-serif" font-size="11">종결어미 · 구두점 기반</text>
+
+  <!-- Arrows to outputs -->
+  <path d="M480,355 L320,355 L320,420" stroke="#475569" stroke-width="2.5" fill="none" marker-end="url(#arrowhead)"/>
+  <path d="M570,390 L570,420" stroke="#475569" stroke-width="2.5" fill="none" marker-end="url(#arrowhead)"/>
+  <path d="M660,355 L780,355 L780,420" stroke="#475569" stroke-width="2.5" fill="none" marker-end="url(#arrowhead)"/>
+
+  <!-- Output: FCPXML -->
+  <rect x="40" y="430" width="140" height="60" rx="10" fill="#1e293b" stroke="#3b82f6" stroke-width="2"/>
+  <text x="110" y="455" text-anchor="middle" fill="#3b82f6" font-family="system-ui,sans-serif" font-size="14" font-weight="700">.fcpxml</text>
+  <text x="110" y="475" text-anchor="middle" fill="#64748b" font-family="system-ui,sans-serif" font-size="11">Final Cut Pro</text>
+
+  <!-- Arrow from subtitle to FCPXML (long) -->
+  <path d="M480,375 L110,375 L110,430" stroke="#475569" stroke-width="2" fill="none" marker-end="url(#arrowhead)" stroke-dasharray="6,4"/>
+
+  <!-- Output: SRT -->
+  <rect x="250" y="430" width="140" height="60" rx="10" fill="#1e293b" stroke="#22c55e" stroke-width="2"/>
+  <text x="320" y="455" text-anchor="middle" fill="#22c55e" font-family="system-ui,sans-serif" font-size="14" font-weight="700">.srt</text>
+  <text x="320" y="475" text-anchor="middle" fill="#64748b" font-family="system-ui,sans-serif" font-size="11">SubRip 자막</text>
+
+  <!-- Output: iTT -->
+  <rect x="460" y="430" width="140" height="60" rx="10" fill="#1e293b" stroke="#a855f7" stroke-width="2"/>
+  <text x="530" y="455" text-anchor="middle" fill="#a855f7" font-family="system-ui,sans-serif" font-size="14" font-weight="700">.itt</text>
+  <text x="530" y="475" text-anchor="middle" fill="#64748b" font-family="system-ui,sans-serif" font-size="11">iTunes Timed Text</text>
+
+  <!-- Output: TXT -->
+  <rect x="670" y="430" width="140" height="60" rx="10" fill="#1e293b" stroke="#f97316" stroke-width="2"/>
+  <text x="740" y="455" text-anchor="middle" fill="#f97316" font-family="system-ui,sans-serif" font-size="14" font-weight="700">.txt</text>
+  <text x="740" y="475" text-anchor="middle" fill="#64748b" font-family="system-ui,sans-serif" font-size="11">대본 텍스트</text>
+</svg>

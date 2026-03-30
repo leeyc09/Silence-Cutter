@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300">
+  <defs>
+    <linearGradient id="bg3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f172a"/>
+      <stop offset="100%" style="stop-color:#1e293b"/>
+    </linearGradient>
+    <filter id="shadow3" x="-5%" y="-5%" width="110%" height="120%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.25"/>
+    </filter>
+    <marker id="arrow3" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#475569"/>
+    </marker>
+  </defs>
+
+  <rect width="720" height="300" rx="12" fill="url(#bg3)"/>
+
+  <text x="360" y="38" text-anchor="middle" fill="#e2e8f0" font-family="system-ui,sans-serif" font-size="18" font-weight="700">Standalone App — First Launch Setup</text>
+
+  <!-- Step 1 -->
+  <rect x="30" y="70" width="150" height="90" rx="12" fill="#1e293b" stroke="#3b82f6" stroke-width="2" filter="url(#shadow3)"/>
+  <text x="105" y="100" text-anchor="middle" fill="white" font-family="system-ui,sans-serif" font-size="26">📦</text>
+  <text x="105" y="123" text-anchor="middle" fill="#93c5fd" font-family="system-ui,sans-serif" font-size="12" font-weight="600">App Bundle</text>
+  <text x="105" y="143" text-anchor="middle" fill="#475569" font-family="system-ui,sans-serif" font-size="10">SilenceCutter.app</text>
+  <text x="105" y="155" text-anchor="middle" fill="#475569" font-family="system-ui,sans-serif" font-size="10">~1.3 MB</text>
+
+  <!-- Arrow -->
+  <path d="M180,115 L220,115" stroke="#475569" stroke-width="2.5" fill="none" marker-end="url(#arrow3)"/>
+  <text x="200" y="108" text-anchor="middle" fill="#64748b" font-family="system-ui,sans-serif" font-size="9">첫 실행</text>
+
+  <!-- Step 2 -->
+  <rect x="230" y="70" width="150" height="90" rx="12" fill="#1e293b" stroke="#f59e0b" stroke-width="2" filter="url(#shadow3)"/>
+  <text x="305" y="100" text-anchor="middle" fill="white" font-family="system-ui,sans-serif" font-size="26">⚙️</text>
+  <text x="305" y="123" text-anchor="middle" fill="#fbbf24" font-family="system-ui,sans-serif" font-size="12" font-weight="600">venv 자동 생성</text>
+  <text x="305" y="143" text-anchor="middle" fill="#475569" font-family="system-ui,sans-serif" font-size="10">pip install 실행</text>
+  <text x="305" y="155" text-anchor="middle" fill="#475569" font-family="system-ui,sans-serif" font-size="10">~45초 소요</text>
+
+  <!-- Arrow -->
+  <path d="M380,115 L420,115" stroke="#475569" stroke-width="2.5" fill="none" marker-end="url(#arrow3)"/>
+
+  <!-- Step 3 -->
+  <rect x="430" y="70" width="150" height="90" rx="12" fill="#1e293b" stroke="#22c55e" stroke-width="2" filter="url(#shadow3)"/>
+  <text x="505" y="100" text-anchor="middle" fill="white" font-family="system-ui,sans-serif" font-size="26">✅</text>
+  <text x="505" y="123" text-anchor="middle" fill="#4ade80" font-family="system-ui,sans-serif" font-size="12" font-weight="600">사용 준비 완료</text>
+  <text x="505" y="143" text-anchor="middle" fill="#475569" font-family="system-ui,sans-serif" font-size="10">이후 실행은 즉시</text>
+
+  <!-- Arrow -->
+  <path d="M580,115 L620,85" stroke="#475569" stroke-width="2" fill="none" marker-end="url(#arrow3)" stroke-dasharray="5,3"/>
+
+  <!-- First use badge -->
+  <rect x="620" y="60" width="80" height="35" rx="8" fill="#22c55e" opacity="0.15" stroke="#22c55e" stroke-width="1"/>
+  <text x="660" y="82" text-anchor="middle" fill="#22c55e" font-family="system-ui,sans-serif" font-size="11" font-weight="700">즉시 시작</text>
+
+  <!-- Storage info -->
+  <rect x="30" y="190" width="300" height="90" rx="12" fill="#1e293b" stroke="#475569" stroke-width="1" filter="url(#shadow3)"/>
+  <text x="180" y="218" text-anchor="middle" fill="#94a3b8" font-family="system-ui,sans-serif" font-size="13" font-weight="600">📁 저장 경로</text>
+
+  <text x="50" y="242" fill="#64748b" font-family="monospace,monospace" font-size="10">~/Library/Application Support/</text>
+  <text x="50" y="258" fill="#94a3b8" font-family="monospace,monospace" font-size="10">  SilenceCutter/venv/</text>
+  <text x="270" y="258" fill="#475569" font-family="system-ui,sans-serif" font-size="10">~1.5 GB</text>
+
+  <!-- Cleanup info -->
+  <rect x="370" y="190" width="320" height="90" rx="12" fill="#1e293b" stroke="#475569" stroke-width="1" filter="url(#shadow3)"/>
+  <text x="530" y="218" text-anchor="middle" fill="#94a3b8" font-family="system-ui,sans-serif" font-size="13" font-weight="600">🗑️ 삭제 방법</text>
+
+  <text x="390" y="242" fill="#94a3b8" font-family="system-ui,sans-serif" font-size="11">① 앱 메뉴 → Python 환경 삭제</text>
+  <text x="390" y="262" fill="#94a3b8" font-family="system-ui,sans-serif" font-size="11">② rm -rf ~/Library/.../SilenceCutter/</text>
+</svg>

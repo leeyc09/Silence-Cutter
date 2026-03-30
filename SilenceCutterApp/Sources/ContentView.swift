@@ -2,6 +2,7 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 struct ContentView: View {
+    var pythonEnv: PythonEnvironment
     @State private var bridge = PythonBridge()
     @State private var videoModel = VideoPlayerModel()
     @State private var analysisService = AnalysisService()
@@ -10,6 +11,78 @@ struct ContentView: View {
     @State private var showFindReplace = false
 
     var body: some View {
+        ZStack {
+            // Main content — only interactive when Python env is ready
+            mainContent
+                .disabled(!pythonEnv.state.isReady)
+                .opacity(pythonEnv.state.isReady ? 1 : 0.3)
+
+            // Setup overlay when not ready
+            if !pythonEnv.state.isReady {
+                setupOverlay
+            }
+        }
+        .preferredColorScheme(.dark)
+    }
+
+    // MARK: - Setup Overlay
+
+    @ViewBuilder
+    private var setupOverlay: some View {
+        VStack(spacing: 20) {
+            switch pythonEnv.state {
+            case .notStarted, .checking:
+                ProgressView()
+                    .scaleEffect(1.5)
+                Text("환경 확인 중…")
+                    .font(.headline)
+
+            case .installing(let detail):
+                VStack(spacing: 12) {
+                    Text("Python 환경 설치 중")
+                        .font(.title2.bold())
+                    Text("처음 실행 시에만 필요합니다")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+
+                    ProgressView(value: pythonEnv.progress)
+                        .frame(width: 300)
+
+                    Text(detail)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+
+            case .failed(let message):
+                VStack(spacing: 12) {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                        .font(.largeTitle)
+                        .foregroundStyle(.yellow)
+                    Text("환경 설치 실패")
+                        .font(.title2.bold())
+                    Text(message)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                        .frame(maxWidth: 400)
+
+                    Button("다시 시도") {
+                        Task { await pythonEnv.retry() }
+                    }
+                    .buttonStyle(.borderedProminent)
+                }
+
+            case .ready:
+                EmptyView() // Won't show — overlay hidden when ready
+            }
+        }
+        .padding(40)
+        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16))
+    }
+
+    // MARK: - Main Content
+
+    private var mainContent: some View {
         NavigationSplitView {
             // Left panel — transcript / analysis
             VStack(spacing: 0) {
@@ -103,7 +176,7 @@ struct ContentView: View {
                     Button {
                         Task {
                             guard let url = videoModel.videoURL else { return }
-                            await analysisService.analyze(videoURL: url)
+                            await analysisService.analyze(videoURL: url, environment: pythonEnv)
                         }
                     } label: {
                         Label("분석", systemImage: "waveform.badge.magnifyingglass")
@@ -148,7 +221,6 @@ struct ContentView: View {
             .keyboardShortcut("f", modifiers: .command)
             .hidden()
         }
-        .preferredColorScheme(.dark)
     }
 
     // MARK: - Export
@@ -252,5 +324,5 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView()
+    ContentView(pythonEnv: PythonEnvironment())
 }

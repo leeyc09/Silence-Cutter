@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 340">
+  <defs>
+    <linearGradient id="bg2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f172a"/>
+      <stop offset="100%" style="stop-color:#1e293b"/>
+    </linearGradient>
+    <filter id="shadow2" x="-5%" y="-5%" width="110%" height="120%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.25"/>
+    </filter>
+    <marker id="arrow2" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#475569"/>
+    </marker>
+  </defs>
+
+  <rect width="900" height="340" rx="12" fill="url(#bg2)"/>
+
+  <text x="450" y="38" text-anchor="middle" fill="#e2e8f0" font-family="system-ui,sans-serif" font-size="18" font-weight="700">Architecture — Swift ↔ Python Bridge</text>
+
+  <!-- Swift App Box -->
+  <rect x="40" y="65" width="350" height="240" rx="14" fill="#1e293b" stroke="#3b82f6" stroke-width="2" filter="url(#shadow2)"/>
+  <text x="215" y="92" text-anchor="middle" fill="#3b82f6" font-family="system-ui,sans-serif" font-size="14" font-weight="700">🍎 Swift macOS App</text>
+
+  <rect x="60" y="110" width="140" height="45" rx="8" fill="#0f172a" stroke="#475569" stroke-width="1"/>
+  <text x="130" y="137" text-anchor="middle" fill="#94a3b8" font-family="system-ui,sans-serif" font-size="12">SwiftUI Views</text>
+
+  <rect x="230" y="110" width="140" height="45" rx="8" fill="#0f172a" stroke="#475569" stroke-width="1"/>
+  <text x="300" y="137" text-anchor="middle" fill="#94a3b8" font-family="system-ui,sans-serif" font-size="12">AnalysisService</text>
+
+  <rect x="60" y="175" width="140" height="45" rx="8" fill="#0f172a" stroke="#475569" stroke-width="1"/>
+  <text x="130" y="202" text-anchor="middle" fill="#94a3b8" font-family="system-ui,sans-serif" font-size="12">ExportService</text>
+
+  <rect x="230" y="175" width="140" height="45" rx="8" fill="#0f172a" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="300" y="196" text-anchor="middle" fill="#60a5fa" font-family="system-ui,sans-serif" font-size="12" font-weight="600">PythonBridge</text>
+  <text x="300" y="212" text-anchor="middle" fill="#475569" font-family="system-ui,sans-serif" font-size="10">JSON-RPC 2.0</text>
+
+  <rect x="60" y="240" width="310" height="45" rx="8" fill="#0f172a" stroke="#22c55e" stroke-width="1.5"/>
+  <text x="215" y="261" text-anchor="middle" fill="#4ade80" font-family="system-ui,sans-serif" font-size="12" font-weight="600">PythonEnvironment</text>
+  <text x="215" y="277" text-anchor="middle" fill="#475569" font-family="system-ui,sans-serif" font-size="10">venv 자동 설치 · 버전 관리</text>
+
+  <!-- Communication arrows -->
+  <path d="M390,195 L510,195" stroke="#f59e0b" stroke-width="3" fill="none" marker-end="url(#arrow2)"/>
+  <text x="450" y="188" text-anchor="middle" fill="#f59e0b" font-family="system-ui,sans-serif" font-size="10" font-weight="600">stdin →</text>
+  <path d="M510,205 L390,205" stroke="#06b6d4" stroke-width="3" fill="none" marker-end="url(#arrow2)"/>
+  <text x="450" y="222" text-anchor="middle" fill="#06b6d4" font-family="system-ui,sans-serif" font-size="10" font-weight="600">← stdout</text>
+
+  <!-- Python Server Box -->
+  <rect x="510" y="65" width="350" height="240" rx="14" fill="#1e293b" stroke="#22c55e" stroke-width="2" filter="url(#shadow2)"/>
+  <text x="685" y="92" text-anchor="middle" fill="#22c55e" font-family="system-ui,sans-serif" font-size="14" font-weight="700">🐍 Python Subprocess</text>
+
+  <rect x="530" y="110" width="310" height="45" rx="8" fill="#0f172a" stroke="#22c55e" stroke-width="1.5"/>
+  <text x="685" y="131" text-anchor="middle" fill="#4ade80" font-family="system-ui,sans-serif" font-size="12" font-weight="600">silence_cutter.server</text>
+  <text x="685" y="147" text-anchor="middle" fill="#475569" font-family="system-ui,sans-serif" font-size="10">JSON-RPC 라우터</text>
+
+  <rect x="530" y="175" width="145" height="45" rx="8" fill="#0f172a" stroke="#475569" stroke-width="1"/>
+  <text x="602" y="196" text-anchor="middle" fill="#94a3b8" font-family="system-ui,sans-serif" font-size="11">Silero VAD</text>
+  <text x="602" y="212" text-anchor="middle" fill="#475569" font-family="system-ui,sans-serif" font-size="10">PyTorch</text>
+
+  <rect x="695" y="175" width="145" height="45" rx="8" fill="#0f172a" stroke="#475569" stroke-width="1"/>
+  <text x="767" y="196" text-anchor="middle" fill="#94a3b8" font-family="system-ui,sans-serif" font-size="11">Qwen3-ASR</text>
+  <text x="767" y="212" text-anchor="middle" fill="#475569" font-family="system-ui,sans-serif" font-size="10">MLX Audio</text>
+
+  <rect x="530" y="240" width="145" height="45" rx="8" fill="#0f172a" stroke="#475569" stroke-width="1"/>
+  <text x="602" y="266" text-anchor="middle" fill="#94a3b8" font-family="system-ui,sans-serif" font-size="11">FCPXML / SRT / iTT</text>
+
+  <rect x="695" y="240" width="145" height="45" rx="8" fill="#0f172a" stroke="#475569" stroke-width="1"/>
+  <text x="767" y="266" text-anchor="middle" fill="#94a3b8" font-family="system-ui,sans-serif" font-size="11">ForcedAligner</text>
+</svg>

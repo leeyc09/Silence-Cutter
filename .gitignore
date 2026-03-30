@@ -187,3 +187,10 @@ node_modules/
 vendor/
 coverage/
 tmp/
+
+# Swift build artifacts
+SilenceCutterApp/.build/
+dist/
+
+# bg-shell
+.bg-shell/

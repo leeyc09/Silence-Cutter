@@ -1,0 +1,171 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 200">
+  <defs>
+    <linearGradient id="bg4" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f172a"/>
+      <stop offset="100%" style="stop-color:#1e293b"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="800" height="200" rx="12" fill="url(#bg4)"/>
+
+  <text x="400" y="32" text-anchor="middle" fill="#e2e8f0" font-family="system-ui,sans-serif" font-size="16" font-weight="700">Waveform — Before &amp; After</text>
+
+  <!-- Before: full waveform with silence -->
+  <text x="30" y="68" fill="#94a3b8" font-family="system-ui,sans-serif" font-size="11" font-weight="600">Before (원본)</text>
+
+  <!-- Waveform bars with gaps representing silence -->
+  <g transform="translate(30,75)">
+    <!-- Speech 1 -->
+    <rect x="0" y="10" width="4" height="12" rx="1" fill="#3b82f6" opacity="0.8"/>
+    <rect x="6" y="5" width="4" height="22" rx="1" fill="#3b82f6" opacity="0.9"/>
+    <rect x="12" y="3" width="4" height="26" rx="1" fill="#3b82f6"/>
+    <rect x="18" y="7" width="4" height="18" rx="1" fill="#3b82f6" opacity="0.85"/>
+    <rect x="24" y="4" width="4" height="24" rx="1" fill="#3b82f6" opacity="0.95"/>
+    <rect x="30" y="8" width="4" height="16" rx="1" fill="#3b82f6" opacity="0.7"/>
+    <rect x="36" y="6" width="4" height="20" rx="1" fill="#3b82f6" opacity="0.8"/>
+    <rect x="42" y="3" width="4" height="26" rx="1" fill="#3b82f6" opacity="0.9"/>
+    <rect x="48" y="9" width="4" height="14" rx="1" fill="#3b82f6" opacity="0.6"/>
+
+    <!-- Silence 1 (red region) -->
+    <rect x="55" y="0" width="80" height="32" rx="4" fill="#ef4444" opacity="0.08"/>
+    <rect x="60" y="14" width="4" height="4" rx="1" fill="#475569" opacity="0.3"/>
+    <rect x="68" y="13" width="4" height="6" rx="1" fill="#475569" opacity="0.3"/>
+    <rect x="76" y="14" width="4" height="4" rx="1" fill="#475569" opacity="0.25"/>
+    <rect x="84" y="15" width="4" height="2" rx="1" fill="#475569" opacity="0.2"/>
+    <rect x="92" y="14" width="4" height="4" rx="1" fill="#475569" opacity="0.25"/>
+    <rect x="100" y="13" width="4" height="6" rx="1" fill="#475569" opacity="0.3"/>
+    <rect x="108" y="14" width="4" height="4" rx="1" fill="#475569" opacity="0.25"/>
+    <rect x="116" y="15" width="4" height="2" rx="1" fill="#475569" opacity="0.2"/>
+    <rect x="124" y="14" width="4" height="4" rx="1" fill="#475569" opacity="0.25"/>
+    <line x1="55" y1="32" x2="135" y2="32" stroke="#ef4444" stroke-width="2" opacity="0.5"/>
+
+    <!-- Speech 2 -->
+    <rect x="140" y="6" width="4" height="20" rx="1" fill="#3b82f6" opacity="0.85"/>
+    <rect x="146" y="3" width="4" height="26" rx="1" fill="#3b82f6"/>
+    <rect x="152" y="5" width="4" height="22" rx="1" fill="#3b82f6" opacity="0.9"/>
+    <rect x="158" y="2" width="4" height="28" rx="1" fill="#3b82f6" opacity="0.95"/>
+    <rect x="164" y="7" width="4" height="18" rx="1" fill="#3b82f6" opacity="0.75"/>
+    <rect x="170" y="4" width="4" height="24" rx="1" fill="#3b82f6" opacity="0.9"/>
+    <rect x="176" y="8" width="4" height="16" rx="1" fill="#3b82f6" opacity="0.7"/>
+    <rect x="182" y="5" width="4" height="22" rx="1" fill="#3b82f6" opacity="0.85"/>
+    <rect x="188" y="3" width="4" height="26" rx="1" fill="#3b82f6"/>
+    <rect x="194" y="6" width="4" height="20" rx="1" fill="#3b82f6" opacity="0.8"/>
+    <rect x="200" y="4" width="4" height="24" rx="1" fill="#3b82f6" opacity="0.9"/>
+    <rect x="206" y="9" width="4" height="14" rx="1" fill="#3b82f6" opacity="0.6"/>
+
+    <!-- Silence 2 -->
+    <rect x="215" y="0" width="130" height="32" rx="4" fill="#ef4444" opacity="0.08"/>
+    <rect x="220" y="14" width="4" height="4" rx="1" fill="#475569" opacity="0.25"/>
+    <rect x="230" y="15" width="4" height="2" rx="1" fill="#475569" opacity="0.2"/>
+    <rect x="240" y="14" width="4" height="4" rx="1" fill="#475569" opacity="0.25"/>
+    <rect x="250" y="15" width="4" height="2" rx="1" fill="#475569" opacity="0.2"/>
+    <rect x="260" y="14" width="4" height="4" rx="1" fill="#475569" opacity="0.25"/>
+    <rect x="270" y="15" width="4" height="2" rx="1" fill="#475569" opacity="0.2"/>
+    <rect x="280" y="14" width="4" height="4" rx="1" fill="#475569" opacity="0.25"/>
+    <rect x="290" y="15" width="4" height="2" rx="1" fill="#475569" opacity="0.2"/>
+    <rect x="300" y="14" width="4" height="4" rx="1" fill="#475569" opacity="0.3"/>
+    <rect x="310" y="15" width="4" height="2" rx="1" fill="#475569" opacity="0.2"/>
+    <rect x="320" y="14" width="4" height="4" rx="1" fill="#475569" opacity="0.25"/>
+    <rect x="330" y="15" width="4" height="2" rx="1" fill="#475569" opacity="0.2"/>
+    <line x1="215" y1="32" x2="345" y2="32" stroke="#ef4444" stroke-width="2" opacity="0.5"/>
+
+    <!-- Speech 3 -->
+    <rect x="350" y="5" width="4" height="22" rx="1" fill="#3b82f6" opacity="0.9"/>
+    <rect x="356" y="3" width="4" height="26" rx="1" fill="#3b82f6"/>
+    <rect x="362" y="6" width="4" height="20" rx="1" fill="#3b82f6" opacity="0.85"/>
+    <rect x="368" y="2" width="4" height="28" rx="1" fill="#3b82f6" opacity="0.95"/>
+    <rect x="374" y="4" width="4" height="24" rx="1" fill="#3b82f6" opacity="0.9"/>
+    <rect x="380" y="7" width="4" height="18" rx="1" fill="#3b82f6" opacity="0.8"/>
+    <rect x="386" y="10" width="4" height="12" rx="1" fill="#3b82f6" opacity="0.6"/>
+
+    <!-- Silence 3 -->
+    <rect x="395" y="0" width="60" height="32" rx="4" fill="#ef4444" opacity="0.08"/>
+    <rect x="400" y="14" width="4" height="4" rx="1" fill="#475569" opacity="0.25"/>
+    <rect x="410" y="15" width="4" height="2" rx="1" fill="#475569" opacity="0.2"/>
+    <rect x="420" y="14" width="4" height="4" rx="1" fill="#475569" opacity="0.25"/>
+    <rect x="430" y="15" width="4" height="2" rx="1" fill="#475569" opacity="0.2"/>
+    <rect x="440" y="14" width="4" height="4" rx="1" fill="#475569" opacity="0.25"/>
+    <line x1="395" y1="32" x2="455" y2="32" stroke="#ef4444" stroke-width="2" opacity="0.5"/>
+
+    <!-- Speech 4 -->
+    <rect x="460" y="5" width="4" height="22" rx="1" fill="#3b82f6" opacity="0.85"/>
+    <rect x="466" y="3" width="4" height="26" rx="1" fill="#3b82f6"/>
+    <rect x="472" y="7" width="4" height="18" rx="1" fill="#3b82f6" opacity="0.75"/>
+    <rect x="478" y="4" width="4" height="24" rx="1" fill="#3b82f6" opacity="0.9"/>
+    <rect x="484" y="2" width="4" height="28" rx="1" fill="#3b82f6" opacity="0.95"/>
+    <rect x="490" y="6" width="4" height="20" rx="1" fill="#3b82f6" opacity="0.8"/>
+    <rect x="496" y="8" width="4" height="16" rx="1" fill="#3b82f6" opacity="0.7"/>
+    <rect x="502" y="3" width="4" height="26" rx="1" fill="#3b82f6" opacity="0.9"/>
+    <rect x="508" y="5" width="4" height="22" rx="1" fill="#3b82f6" opacity="0.85"/>
+    <rect x="514" y="9" width="4" height="14" rx="1" fill="#3b82f6" opacity="0.65"/>
+
+    <!-- Legend -->
+    <rect x="560" y="5" width="10" height="10" rx="2" fill="#3b82f6"/>
+    <text x="575" y="14" fill="#94a3b8" font-family="system-ui,sans-serif" font-size="10">음성</text>
+    <rect x="610" y="5" width="10" height="10" rx="2" fill="#ef4444" opacity="0.3"/>
+    <text x="625" y="14" fill="#94a3b8" font-family="system-ui,sans-serif" font-size="10">무음 (제거)</text>
+  </g>
+
+  <!-- After: compact waveform -->
+  <text x="30" y="142" fill="#4ade80" font-family="system-ui,sans-serif" font-size="11" font-weight="600">After (편집 후)</text>
+
+  <g transform="translate(30,148)">
+    <!-- Speech 1 (same) -->
+    <rect x="0" y="10" width="4" height="12" rx="1" fill="#22c55e" opacity="0.8"/>
+    <rect x="6" y="5" width="4" height="22" rx="1" fill="#22c55e" opacity="0.9"/>
+    <rect x="12" y="3" width="4" height="26" rx="1" fill="#22c55e"/>
+    <rect x="18" y="7" width="4" height="18" rx="1" fill="#22c55e" opacity="0.85"/>
+    <rect x="24" y="4" width="4" height="24" rx="1" fill="#22c55e" opacity="0.95"/>
+    <rect x="30" y="8" width="4" height="16" rx="1" fill="#22c55e" opacity="0.7"/>
+    <rect x="36" y="6" width="4" height="20" rx="1" fill="#22c55e" opacity="0.8"/>
+    <rect x="42" y="3" width="4" height="26" rx="1" fill="#22c55e" opacity="0.9"/>
+    <rect x="48" y="9" width="4" height="14" rx="1" fill="#22c55e" opacity="0.6"/>
+
+    <!-- Tiny gap -->
+    <rect x="54" y="14" width="2" height="4" rx="1" fill="#475569" opacity="0.3"/>
+
+    <!-- Speech 2 (shifted left) -->
+    <rect x="60" y="6" width="4" height="20" rx="1" fill="#22c55e" opacity="0.85"/>
+    <rect x="66" y="3" width="4" height="26" rx="1" fill="#22c55e"/>
+    <rect x="72" y="5" width="4" height="22" rx="1" fill="#22c55e" opacity="0.9"/>
+    <rect x="78" y="2" width="4" height="28" rx="1" fill="#22c55e" opacity="0.95"/>
+    <rect x="84" y="7" width="4" height="18" rx="1" fill="#22c55e" opacity="0.75"/>
+    <rect x="90" y="4" width="4" height="24" rx="1" fill="#22c55e" opacity="0.9"/>
+    <rect x="96" y="8" width="4" height="16" rx="1" fill="#22c55e" opacity="0.7"/>
+    <rect x="102" y="5" width="4" height="22" rx="1" fill="#22c55e" opacity="0.85"/>
+    <rect x="108" y="3" width="4" height="26" rx="1" fill="#22c55e"/>
+    <rect x="114" y="6" width="4" height="20" rx="1" fill="#22c55e" opacity="0.8"/>
+    <rect x="120" y="4" width="4" height="24" rx="1" fill="#22c55e" opacity="0.9"/>
+    <rect x="126" y="9" width="4" height="14" rx="1" fill="#22c55e" opacity="0.6"/>
+
+    <!-- Tiny gap -->
+    <rect x="132" y="14" width="2" height="4" rx="1" fill="#475569" opacity="0.3"/>
+
+    <!-- Speech 3 -->
+    <rect x="138" y="5" width="4" height="22" rx="1" fill="#22c55e" opacity="0.9"/>
+    <rect x="144" y="3" width="4" height="26" rx="1" fill="#22c55e"/>
+    <rect x="150" y="6" width="4" height="20" rx="1" fill="#22c55e" opacity="0.85"/>
+    <rect x="156" y="2" width="4" height="28" rx="1" fill="#22c55e" opacity="0.95"/>
+    <rect x="162" y="4" width="4" height="24" rx="1" fill="#22c55e" opacity="0.9"/>
+    <rect x="168" y="7" width="4" height="18" rx="1" fill="#22c55e" opacity="0.8"/>
+    <rect x="174" y="10" width="4" height="12" rx="1" fill="#22c55e" opacity="0.6"/>
+
+    <!-- Tiny gap -->
+    <rect x="180" y="14" width="2" height="4" rx="1" fill="#475569" opacity="0.3"/>
+
+    <!-- Speech 4 -->
+    <rect x="186" y="5" width="4" height="22" rx="1" fill="#22c55e" opacity="0.85"/>
+    <rect x="192" y="3" width="4" height="26" rx="1" fill="#22c55e"/>
+    <rect x="198" y="7" width="4" height="18" rx="1" fill="#22c55e" opacity="0.75"/>
+    <rect x="204" y="4" width="4" height="24" rx="1" fill="#22c55e" opacity="0.9"/>
+    <rect x="210" y="2" width="4" height="28" rx="1" fill="#22c55e" opacity="0.95"/>
+    <rect x="216" y="6" width="4" height="20" rx="1" fill="#22c55e" opacity="0.8"/>
+    <rect x="222" y="8" width="4" height="16" rx="1" fill="#22c55e" opacity="0.7"/>
+    <rect x="228" y="3" width="4" height="26" rx="1" fill="#22c55e" opacity="0.9"/>
+    <rect x="234" y="5" width="4" height="22" rx="1" fill="#22c55e" opacity="0.85"/>
+    <rect x="240" y="9" width="4" height="14" rx="1" fill="#22c55e" opacity="0.65"/>
+
+    <!-- Compression indicator -->
+    <text x="290" y="20" fill="#4ade80" font-family="system-ui,sans-serif" font-size="12" font-weight="700">▸ 46% 단축</text>
+  </g>
+</svg>

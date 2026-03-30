@@ -12,6 +12,9 @@ private let isTestAnalyzeMode = CommandLine.arguments.contains("--test-analyze")
 
 @main
 struct SilenceCutterApp: App {
+    @State private var pythonEnv = PythonEnvironment()
+    @State private var showRemoveConfirm = false
+
     init() {
         // Swift Package executables default to accessory activation policy,
         // which prevents the app from appearing in the Dock and receiving focus.
@@ -26,10 +29,36 @@ struct SilenceCutterApp: App {
             } else if isTestAnalyzeMode {
                 AnalyzeTestRunner()
             } else {
-                ContentView()
+                ContentView(pythonEnv: pythonEnv)
+                    .task {
+                        await pythonEnv.ensureReady()
+                    }
             }
         }
         .defaultSize(width: 1200, height: 800)
+        .commands {
+            CommandGroup(after: .appInfo) {
+                Button("Python 환경 삭제 (\(pythonEnv.installedSizeString))…") {
+                    showRemoveConfirm = true
+                }
+                .disabled(!pythonEnv.isInstalled)
+                .confirmationDialog(
+                    "Python 환경을 삭제하시겠습니까?",
+                    isPresented: $showRemoveConfirm
+                ) {
+                    Button("삭제", role: .destructive) {
+                        do {
+                            try pythonEnv.removeEnvironment()
+                        } catch {
+                            print("[App] Failed to remove environment: \(error)")
+                        }
+                    }
+                    Button("취소", role: .cancel) {}
+                } message: {
+                    Text("경로: \(pythonEnv.supportDirPath)\n크기: \(pythonEnv.installedSizeString)\n\n삭제 후 다음 실행 시 다시 설치됩니다.")
+                }
+            }
+        }
     }
 }
 
