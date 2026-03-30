@@ -20,7 +20,7 @@ Silero VAD + Qwen3-ASR 기반 — macOS Apple Silicon 최적화
 영상에서 무음 구간을 자동 감지·제거하고, 단어 단위 타임스탬프 자막과 함께
 FCPXML을 생성합니다.
 
-[macOS 앱](#-macos-앱) · [CLI 사용법](#-cli-명령어) · [Web UI](#-web-ui) · [설치](#-설치)
+[macOS 앱](#-macos-앱) · [CLI 사용법](#-cli-명령어) · [설치](#-설치)
 
 </div>
 
@@ -61,10 +61,9 @@ FCPXML을 생성합니다.
 </td>
 <td>
 
-### 📱 3가지 인터페이스
+### 📱 2가지 인터페이스
 - **macOS 네이티브 앱** — 드래그 앤 드롭, 실시간 미리보기
 - **CLI** — 스크립트/자동화에 최적
-- **Web UI** — Gradio 기반 브라우저 인터페이스
 
 </td>
 </tr>

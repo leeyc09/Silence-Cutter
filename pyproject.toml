@@ -21,7 +21,6 @@ classifiers = [
   "Topic :: Multimedia :: Video",
 ]
 dependencies = [
-  "gradio>=4.0.0",
   "librosa>=0.10.0",
   "mlx-audio>=0.3.0",
   "numpy<2",
@@ -40,7 +39,6 @@ dev = [
 
 [project.scripts]
 silence-cutter = "silence_cutter.__main__:main"
-silence-cutter-web = "silence_cutter.app:main"
 
 [tool.setuptools]
 packages = { find = { where = ["."] , include = ["silence_cutter*"] } }
