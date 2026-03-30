@@ -8,6 +8,9 @@ struct TranscriptEditorView: View {
     var onSeek: (TimeInterval) -> Void
     var currentTime: TimeInterval = 0
 
+    /// Last auto-scrolled clip index — prevents redundant scrollTo calls.
+    @State private var lastScrolledIndex: Int?
+
     /// Computed index of the currently playing clip
     private var activeClipIndex: Int? {
         analysisService.segments.firstIndex { seg in
@@ -49,11 +52,13 @@ struct TranscriptEditorView: View {
                     .padding(.vertical, 4)
                 }
                 .onChange(of: activeClipIndex) { _, newIndex in
-                    if let idx = newIndex, idx < analysisService.segments.count {
-                        withAnimation(.easeInOut(duration: 0.2)) {
-                            proxy.scrollTo(analysisService.segments[idx].id, anchor: .center)
-                        }
-                    }
+                    // Only scroll when clip actually changes — not on every currentTime tick
+                    guard let idx = newIndex,
+                          idx != lastScrolledIndex,
+                          idx < analysisService.segments.count else { return }
+                    lastScrolledIndex = idx
+                    // Use non-animated scroll to avoid fighting user gestures
+                    proxy.scrollTo(analysisService.segments[idx].id, anchor: .center)
                 }
             }
         }
