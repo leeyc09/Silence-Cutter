@@ -114,7 +114,20 @@ Progress notifications stream in real-time.
 Native SwiftUI app — load a video, configure settings, analyze, edit, and export in one window.
 
 <div align="center">
-<img src="docs/app-main.png" width="720" alt="macOS app main screen"/>
+
+### 📋 Analysis Settings
+<img src="docs/app-settings.jpg" width="720" alt="Analysis settings dialog"/>
+
+<br/>
+
+### 📊 Real-time Progress
+<img src="docs/app-progress.jpg" width="720" alt="Analysis progress view"/>
+
+<br/>
+
+### ✂️ Word-level Editing
+<img src="docs/app-main.jpg" width="720" alt="Main editing screen with word-level editing"/>
+
 </div>
 
 ### App Features
