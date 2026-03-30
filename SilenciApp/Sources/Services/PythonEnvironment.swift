@@ -35,7 +35,7 @@ final class PythonEnvironment {
     // MARK: - Constants
 
     /// Version stamp — bump this when dependencies change to force reinstall.
-    private static let envVersion = "3"
+    private static let envVersion = "4"
 
     /// pip packages required for the server mode.
     private static let serverDependencies: [String] = [
@@ -138,8 +138,17 @@ final class PythonEnvironment {
 
         let brewPath = findBrew()
 
-        // 2. Python3
-        if findSystemPython() == nil {
+        // 2. Python3 (need 3.10+ for mlx-audio)
+        if let pythonPath = findSystemPython() {
+            // Check version — mlx-audio requires 3.10+
+            let versionOk = await checkPythonVersion(pythonPath, minMajor: 3, minMinor: 10)
+            if !versionOk {
+                state = .installing(detail: "Upgrading Python3 (3.10+ required)…")
+                progress = 0.04
+                print("[PythonEnvironment] Python found but too old — upgrading via Homebrew…")
+                try await run(brewPath, arguments: ["install", "python@3"])
+            }
+        } else {
             state = .installing(detail: "Installing Python3…")
             progress = 0.04
             print("[PythonEnvironment] Python3 not found — installing via Homebrew…")
@@ -165,6 +174,37 @@ final class PythonEnvironment {
     /// Check if a command exists at the given path.
     private func isCommandAvailable(_ path: String) -> Bool {
         FileManager.default.isExecutableFile(atPath: path)
+    }
+
+    /// Check Python version meets minimum requirement.
+    private func checkPythonVersion(_ pythonPath: String, minMajor: Int, minMinor: Int) async -> Bool {
+        let proc = Process()
+        proc.executableURL = URL(fileURLWithPath: pythonPath)
+        proc.arguments = ["-c", "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}')"]
+        let pipe = Pipe()
+        proc.standardOutput = pipe
+        proc.standardError = Pipe()
+
+        do {
+            try proc.run()
+            return await withCheckedContinuation { continuation in
+                DispatchQueue.global().async {
+                    proc.waitUntilExit()
+                    let data = pipe.fileHandleForReading.readDataToEndOfFile()
+                    let output = String(data: data, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+                    let parts = output.split(separator: ".").compactMap { Int($0) }
+                    if parts.count >= 2 {
+                        let ok = parts[0] > minMajor || (parts[0] == minMajor && parts[1] >= minMinor)
+                        print("[PythonEnvironment] Python version: \(output) (need \(minMajor).\(minMinor)+) → \(ok ? "OK" : "too old")")
+                        continuation.resume(returning: ok)
+                    } else {
+                        continuation.resume(returning: false)
+                    }
+                }
+            }
+        } catch {
+            return false
+        }
     }
 
     /// Find Homebrew binary.
@@ -252,8 +292,13 @@ final class PythonEnvironment {
         progress = 0.10
         try await run(systemPython, arguments: ["-m", "venv", venvDir.path])
 
-        // Install dependencies
+        // Upgrade pip first — old pip versions can't find newer packages
         let pipPath = venvDir.appendingPathComponent("bin/pip").path
+        state = .installing(detail: "Upgrading pip…")
+        progress = 0.12
+        try await run(pipPath, arguments: ["install", "--upgrade", "pip"])
+
+        // Install dependencies
         let totalDeps = Self.serverDependencies.count
 
         for (index, dep) in Self.serverDependencies.enumerated() {
