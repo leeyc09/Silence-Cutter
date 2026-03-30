@@ -11,7 +11,7 @@ private let isTestBridgeMode = CommandLine.arguments.contains("--test-bridge")
 private let isTestAnalyzeMode = CommandLine.arguments.contains("--test-analyze")
 
 @main
-struct SilenceCutterApp: App {
+struct SilenciApp: App {
     @State private var pythonEnv = PythonEnvironment()
     @State private var showRemoveConfirm = false
 

@@ -20,7 +20,7 @@
   <rect x="30" y="70" width="150" height="90" rx="12" fill="#1e293b" stroke="#3b82f6" stroke-width="2" filter="url(#shadow3)"/>
   <text x="105" y="100" text-anchor="middle" fill="white" font-family="system-ui,sans-serif" font-size="26">📦</text>
   <text x="105" y="123" text-anchor="middle" fill="#93c5fd" font-family="system-ui,sans-serif" font-size="12" font-weight="600">App Bundle</text>
-  <text x="105" y="143" text-anchor="middle" fill="#475569" font-family="system-ui,sans-serif" font-size="10">SilenceCutter.app</text>
+  <text x="105" y="143" text-anchor="middle" fill="#475569" font-family="system-ui,sans-serif" font-size="10">Silenci.app</text>
   <text x="105" y="155" text-anchor="middle" fill="#475569" font-family="system-ui,sans-serif" font-size="10">~1.3 MB</text>
 
   <!-- Arrow -->
@@ -55,7 +55,7 @@
   <text x="180" y="218" text-anchor="middle" fill="#94a3b8" font-family="system-ui,sans-serif" font-size="13" font-weight="600">📁 Storage Path</text>
 
   <text x="50" y="242" fill="#64748b" font-family="monospace,monospace" font-size="10">~/Library/Application Support/</text>
-  <text x="50" y="258" fill="#94a3b8" font-family="monospace,monospace" font-size="10">  SilenceCutter/venv/</text>
+  <text x="50" y="258" fill="#94a3b8" font-family="monospace,monospace" font-size="10">  Silenci/venv/</text>
   <text x="270" y="258" fill="#475569" font-family="system-ui,sans-serif" font-size="10">~1.5 GB</text>
 
   <!-- Cleanup info -->
@@ -63,5 +63,5 @@
   <text x="530" y="218" text-anchor="middle" fill="#94a3b8" font-family="system-ui,sans-serif" font-size="13" font-weight="600">🗑️ Uninstall</text>
 
   <text x="390" y="242" fill="#94a3b8" font-family="system-ui,sans-serif" font-size="11">① App menu → Remove Python Env</text>
-  <text x="390" y="262" fill="#94a3b8" font-family="system-ui,sans-serif" font-size="11">② rm -rf ~/Library/.../SilenceCutter/</text>
+  <text x="390" y="262" fill="#94a3b8" font-family="system-ui,sans-serif" font-size="11">② rm -rf ~/Library/.../Silenci/</text>
 </svg>

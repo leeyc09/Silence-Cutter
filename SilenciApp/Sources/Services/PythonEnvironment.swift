@@ -2,7 +2,7 @@ import Foundation
 
 /// Manages the bundled Python environment for standalone distribution.
 ///
-/// On first launch, creates a venv in ~/Library/Application Support/SilenceCutter/
+/// On first launch, creates a venv in ~/Library/Application Support/Silenci/
 /// and installs the required Python packages. The `silence_cutter` module is
 /// located inside the app bundle's Resources directory.
 ///
@@ -49,18 +49,18 @@ final class PythonEnvironment {
 
     // MARK: - Paths
 
-    /// ~/Library/Application Support/SilenceCutter/
+    /// ~/Library/Application Support/Silenci/
     private var supportDir: URL {
         let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
-        return appSupport.appendingPathComponent("SilenceCutter")
+        return appSupport.appendingPathComponent("Silenci")
     }
 
-    /// ~/Library/Application Support/SilenceCutter/venv/
+    /// ~/Library/Application Support/Silenci/venv/
     private var venvDir: URL {
         supportDir.appendingPathComponent("venv")
     }
 
-    /// ~/Library/Application Support/SilenceCutter/venv/bin/python
+    /// ~/Library/Application Support/Silenci/venv/bin/python
     private var venvPython: URL {
         venvDir.appendingPathComponent("bin/python")
     }

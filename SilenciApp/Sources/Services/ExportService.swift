@@ -167,8 +167,8 @@ struct ExportService {
             <effect id="r3" name="Basic Title" uid=".../Titles.localized/Bumper:Opener.localized/Basic Title.localized/Basic Title.moti"/>
           </resources>
           <library>
-            <event name="SilenceCutter Export">
-              <project name="SilenceCutter Export">
+            <event name="Silenci Export">
+              <project name="Silenci Export">
                 <sequence format="\(formatId)" duration="\(rationalStr(totalDur))" \
         tcStart="0s" tcFormat="NDF" audioLayout="stereo" audioRate="48k">
                   <spine>

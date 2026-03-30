@@ -33,7 +33,7 @@ log_step() {
 echo ""
 echo -e "${BOLD}╔═══════════════════════════════════════════════════════════════════╗${NC}"
 echo -e "${BOLD}║                                                                   ║${NC}"
-echo -e "${BOLD}║   ${CYAN}Silence Cutter${NC}${BOLD}                                              ║${NC}"
+echo -e "${BOLD}║   ${CYAN}Silenci${NC}${BOLD}                                              ║${NC}"
 echo -e "${BOLD}║   ${GREEN}Mac setup for VAD + subtitle pipeline${NC}${BOLD}                       ║${NC}"
 echo -e "${BOLD}║                                                                   ║${NC}"
 echo -e "${BOLD}║   ffmpeg + Python virtualenv + pip install                        ║${NC}"

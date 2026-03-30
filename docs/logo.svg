@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f172a"/>
+      <stop offset="100%" style="stop-color:#1e293b"/>
+    </linearGradient>
+    <linearGradient id="waveGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#06b6d4"/>
+      <stop offset="50%" style="stop-color:#3b82f6"/>
+      <stop offset="100%" style="stop-color:#8b5cf6"/>
+    </linearGradient>
+    <linearGradient id="cutGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#f43f5e"/>
+      <stop offset="100%" style="stop-color:#e11d48"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background rounded square -->
+  <rect width="1024" height="1024" rx="224" fill="url(#bgGrad)"/>
+
+  <!-- Subtle grid pattern -->
+  <g opacity="0.03" stroke="#fff" stroke-width="1">
+    <line x1="0" y1="256" x2="1024" y2="256"/>
+    <line x1="0" y1="512" x2="1024" y2="512"/>
+    <line x1="0" y1="768" x2="1024" y2="768"/>
+    <line x1="256" y1="0" x2="256" y2="1024"/>
+    <line x1="512" y1="0" x2="512" y2="1024"/>
+    <line x1="768" y1="0" x2="768" y2="1024"/>
+  </g>
+
+  <!-- Waveform bars — left side (speech) -->
+  <g transform="translate(120, 340)">
+    <rect x="0" y="60" width="28" height="80" rx="14" fill="url(#waveGrad)" opacity="0.6"/>
+    <rect x="44" y="30" width="28" height="140" rx="14" fill="url(#waveGrad)" opacity="0.75"/>
+    <rect x="88" y="10" width="28" height="180" rx="14" fill="url(#waveGrad)" opacity="0.9"/>
+    <rect x="132" y="0" width="28" height="200" rx="14" fill="url(#waveGrad)"/>
+    <rect x="176" y="20" width="28" height="160" rx="14" fill="url(#waveGrad)" opacity="0.85"/>
+    <rect x="220" y="40" width="28" height="120" rx="14" fill="url(#waveGrad)" opacity="0.7"/>
+    <rect x="264" y="55" width="28" height="90" rx="14" fill="url(#waveGrad)" opacity="0.55"/>
+  </g>
+
+  <!-- Diagonal cut line -->
+  <line x1="435" y1="280" x2="590" y2="744" stroke="url(#cutGrad)" stroke-width="6" stroke-linecap="round" opacity="0.9"/>
+
+  <!-- Scissors icon at the cut -->
+  <g transform="translate(490, 470) scale(0.8)">
+    <circle cx="0" cy="40" r="28" fill="none" stroke="#f43f5e" stroke-width="5"/>
+    <circle cx="0" cy="-40" r="28" fill="none" stroke="#f43f5e" stroke-width="5"/>
+    <line x1="0" y1="12" x2="50" y2="-20" stroke="#f43f5e" stroke-width="5" stroke-linecap="round"/>
+    <line x1="0" y1="-12" x2="50" y2="20" stroke="#f43f5e" stroke-width="5" stroke-linecap="round"/>
+  </g>
+
+  <!-- Silence gap (faded) -->
+  <g transform="translate(430, 340)" opacity="0.15">
+    <rect x="0" y="80" width="28" height="40" rx="14" fill="#475569"/>
+    <rect x="44" y="85" width="28" height="30" rx="14" fill="#475569"/>
+    <rect x="88" y="82" width="28" height="36" rx="14" fill="#475569"/>
+  </g>
+
+  <!-- Waveform bars — right side (speech, shifted closer = silence removed) -->
+  <g transform="translate(610, 340)">
+    <rect x="0" y="55" width="28" height="90" rx="14" fill="url(#waveGrad)" opacity="0.55"/>
+    <rect x="44" y="35" width="28" height="130" rx="14" fill="url(#waveGrad)" opacity="0.75"/>
+    <rect x="88" y="15" width="28" height="170" rx="14" fill="url(#waveGrad)" opacity="0.9"/>
+    <rect x="132" y="5" width="28" height="190" rx="14" fill="url(#waveGrad)"/>
+    <rect x="176" y="25" width="28" height="150" rx="14" fill="url(#waveGrad)" opacity="0.8"/>
+    <rect x="220" y="50" width="28" height="100" rx="14" fill="url(#waveGrad)" opacity="0.6"/>
+    <rect x="264" y="65" width="28" height="70" rx="14" fill="url(#waveGrad)" opacity="0.45"/>
+  </g>
+
+  <!-- "S" letterform hint integrated into the wave -->
+  <text x="512" y="900" text-anchor="middle" fill="white" font-family="SF Pro Display,system-ui,-apple-system,sans-serif" font-size="96" font-weight="800" letter-spacing="8" opacity="0.95">Silenci</text>
+</svg>

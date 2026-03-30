@@ -1,6 +1,8 @@
 <div align="center">
 
-# 🎬 Silence Cutter
+<img src="docs/logo.svg" width="200" alt="Silenci logo"/>
+
+# 🎬 Silenci
 
 **Automatically remove silence from videos and generate perfectly synced subtitles**
 
@@ -9,7 +11,7 @@ Drop a video → AI detects & cuts silence → Export to Final Cut Pro with word
 [![macOS](https://img.shields.io/badge/macOS-14.0+-000000?style=flat-square&logo=apple&logoColor=white)](https://www.apple.com/macos/)
 [![Apple Silicon](https://img.shields.io/badge/Apple_Silicon-Optimized-FF6B35?style=flat-square&logo=apple&logoColor=white)](#)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue?style=flat-square)](LICENSE)
-[![Stars](https://img.shields.io/github/stars/leeyc09/Silence-Cutter?style=flat-square&color=yellow)](https://github.com/leeyc09/Silence-Cutter/stargazers)
+[![Stars](https://img.shields.io/github/stars/leeyc09/Silence-Cutter?style=flat-square&color=yellow)](https://github.com/leeyc09/Silenci/stargazers)
 
 [한국어 문서](README.ko.md)
 
@@ -21,13 +23,13 @@ Drop a video → AI detects & cuts silence → Export to Final Cut Pro with word
 
 ---
 
-## Why Silence Cutter?
+## Why Silenci?
 
 Most silence-removal tools split audio **by time**, which cuts words in half.
-Silence Cutter uses a **2-Pass ASR** approach — first transcribe, then split only at **word boundaries**.
+Silenci uses a **2-Pass ASR** approach — first transcribe, then split only at **word boundaries**.
 No mid-word cuts. Ever.
 
-| | Other tools | Silence Cutter |
+| | Other tools | Silenci |
 |:--|:-----------|:---------------|
 | Split method | Time-based → words get chopped | Word-boundary → clean cuts |
 | Subtitles | Separate tool needed | Built-in, word-level synced |
@@ -160,8 +162,8 @@ Native SwiftUI app — load a video, configure settings, analyze, edit, and expo
 ### Build & Run
 
 ```bash
-./build-release.sh                # Build → dist/SilenceCutterApp.app
-open dist/SilenceCutterApp.app    # Launch
+./build-release.sh                # Build → dist/SilenciApp.app
+open dist/SilenciApp.app    # Launch
 ```
 
 ### First Launch — Auto Setup
@@ -175,17 +177,17 @@ ASR models are downloaded on first analysis with byte-level progress tracking.
 
 | Item | Path | Size |
 |:----:|------|:----:|
-| 🐍 Python venv | `~/Library/Application Support/SilenceCutter/venv/` | ~1.5 GB |
+| 🐍 Python venv | `~/Library/Application Support/Silenci/venv/` | ~1.5 GB |
 | 🤖 ASR model cache | `~/.cache/huggingface/hub/` | ~1-2 GB |
 
 ### Complete Uninstall
 
 **Option 1 — From the app:**
-> Menu bar → **SilenceCutter** → **Python 환경 삭제**
+> Menu bar → **Silenci** → **Python 환경 삭제**
 
 **Option 2 — Manual:**
 ```bash
-rm -rf ~/Library/Application\ Support/SilenceCutter/
+rm -rf ~/Library/Application\ Support/Silenci/
 rm -rf ~/.cache/huggingface/hub/models--mlx-community--Qwen3-*
 ```
 
@@ -355,7 +357,7 @@ Priority 3  Auto-correct overlapping timestamps after splitting
 ## 🗂️ Project Structure
 
 ```
-Silence-Cutter/
+Silenci/
 ├── silence_cutter/                  # Python package
 │   ├── server.py                    # JSON-RPC server (2-pass ASR)
 │   ├── vad.py                       # Silero VAD + silence-based splitting
@@ -364,7 +366,7 @@ Silence-Cutter/
 │   ├── srt.py / itt.py              # SRT, iTT subtitles
 │   ├── pipeline.py                  # CLI pipeline
 │   └── ...
-├── SilenceCutterApp/                # Swift macOS app
+├── SilenciApp/                # Swift macOS app
 │   ├── Package.swift
 │   └── Sources/
 │       ├── App.swift                # Entry point + menu (env cleanup)
@@ -383,7 +385,7 @@ Silence-Cutter/
 │           ├── ClipCardView.swift        # Clip card (video edit + subtitle)
 │           ├── WordFlowView.swift        # Word-level editing UI
 │           └── SettingsView.swift        # Settings sheet
-├── build-release.sh                 # Release build → dist/SilenceCutterApp.app
+├── build-release.sh                 # Release build → dist/SilenciApp.app
 ├── setup_mac.sh                     # Auto Python environment setup
 └── docs/                            # Diagrams & screenshots
 ```

@@ -1,10 +1,10 @@
 #!/bin/bash
-# build-release.sh — Build SilenceCutterApp and bundle Python module for standalone distribution.
+# build-release.sh — Build SilenciApp and bundle Python module for standalone distribution.
 #
-# Output: dist/SilenceCutterApp.app/
+# Output: dist/SilenciApp.app/
 #
 # The app bundle includes:
-#   Contents/MacOS/SilenceCutterApp     — the Swift executable
+#   Contents/MacOS/SilenciApp     — the Swift executable
 #   Contents/Resources/silence_cutter/  — the Python module
 #   Contents/Resources/pyproject.toml   — dependency metadata
 #   Contents/Info.plist                 — app metadata
@@ -13,18 +13,18 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_ROOT="$SCRIPT_DIR"
-SWIFT_PKG="$PROJECT_ROOT/SilenceCutterApp"
+SWIFT_PKG="$PROJECT_ROOT/SilenciApp"
 DIST_DIR="$PROJECT_ROOT/dist"
-APP_BUNDLE="$DIST_DIR/SilenceCutterApp.app"
+APP_BUNDLE="$DIST_DIR/SilenciApp.app"
 CONTENTS="$APP_BUNDLE/Contents"
 
-echo "=== Building SilenceCutterApp release ==="
+echo "=== Building SilenciApp release ==="
 
 # 1. Build release binary
 echo "[1/4] Building Swift release binary…"
 cd "$SWIFT_PKG"
 swift build -c release 2>&1
-BINARY="$SWIFT_PKG/.build/release/SilenceCutterApp"
+BINARY="$SWIFT_PKG/.build/release/SilenciApp"
 
 if [ ! -f "$BINARY" ]; then
     echo "❌ Build failed — binary not found at $BINARY"
@@ -38,7 +38,7 @@ rm -rf "$APP_BUNDLE"
 mkdir -p "$CONTENTS/MacOS"
 mkdir -p "$CONTENTS/Resources"
 
-cp "$BINARY" "$CONTENTS/MacOS/SilenceCutterApp"
+cp "$BINARY" "$CONTENTS/MacOS/SilenciApp"
 
 # 3. Copy Python module
 echo "[3/5] Bundling Python module…"
@@ -48,12 +48,19 @@ echo "  ✅ silence_cutter/ → Resources/"
 
 # 4. Copy SwiftPM resource bundle (localization strings etc.)
 echo "[4/5] Bundling SwiftPM resources…"
-RESOURCE_BUNDLE=$(find "$SWIFT_PKG/.build" -name "SilenceCutterApp_SilenceCutterApp.bundle" -type d | head -1)
+RESOURCE_BUNDLE=$(find "$SWIFT_PKG/.build" -name "SilenciApp_SilenciApp.bundle" -type d | head -1)
 if [ -n "$RESOURCE_BUNDLE" ]; then
     cp -R "$RESOURCE_BUNDLE" "$CONTENTS/Resources/"
     echo "  ✅ $(basename "$RESOURCE_BUNDLE") → Resources/"
 else
     echo "  ⚠️ No SwiftPM resource bundle found (localization may not work)"
+fi
+
+# Copy app icon
+ICON_FILE="$SWIFT_PKG/Sources/Resources/AppIcon.icns"
+if [ -f "$ICON_FILE" ]; then
+    cp "$ICON_FILE" "$CONTENTS/Resources/AppIcon.icns"
+    echo "  ✅ AppIcon.icns → Resources/"
 fi
 
 # 5. Write Info.plist
@@ -65,17 +72,17 @@ cat > "$CONTENTS/Info.plist" << 'PLIST'
 <plist version="1.0">
 <dict>
     <key>CFBundleName</key>
-    <string>SilenceCutter</string>
+    <string>Silenci</string>
     <key>CFBundleDisplayName</key>
-    <string>SilenceCutter</string>
+    <string>Silenci</string>
     <key>CFBundleIdentifier</key>
-    <string>com.genelab.silencecutter</string>
+    <string>com.genelab.silenci</string>
     <key>CFBundleVersion</key>
     <string>1.0.0</string>
     <key>CFBundleShortVersionString</key>
     <string>1.0.0</string>
     <key>CFBundleExecutable</key>
-    <string>SilenceCutterApp</string>
+    <string>SilenciApp</string>
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleInfoDictionaryVersion</key>

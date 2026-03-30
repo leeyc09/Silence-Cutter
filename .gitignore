@@ -189,7 +189,7 @@ coverage/
 tmp/
 
 # Swift build artifacts
-SilenceCutterApp/.build/
+SilenciApp/.build/
 dist/
 
 # bg-shell
