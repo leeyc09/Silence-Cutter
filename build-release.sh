@@ -102,10 +102,20 @@ echo "=== ✅ Build complete ==="
 echo "App bundle: $APP_BUNDLE"
 du -sh "$APP_BUNDLE"
 
-# 6. Create DMG installer
+# 6. Code sign the app bundle
+echo ""
+echo "[6/7] Code signing…"
+codesign --force --deep --sign "Apple Development: Youngchan Lee (K295R764SP)" "$APP_BUNDLE" 2>&1
+if [ $? -eq 0 ]; then
+    echo "  ✅ Code signed"
+else
+    echo "  ⚠️ Code signing failed — app will require xattr -cr on first launch"
+fi
+
+# 7. Create DMG installer
 if command -v create-dmg &>/dev/null; then
     echo ""
-    echo "[6/6] Creating DMG installer…"
+    echo "[7/8] Creating DMG installer…"
     DMG_PATH="$DIST_DIR/Silenci-v0.3.0-macOS.dmg"
     rm -f "$DMG_PATH"
 
@@ -136,7 +146,7 @@ fi
 
 # 7. Remove quarantine attribute from app bundle
 echo ""
-echo "[7/7] Removing quarantine attribute…"
+echo "[8/8] Removing quarantine attribute…"
 xattr -cr "$APP_BUNDLE" 2>/dev/null
 echo "  ✅ Quarantine removed"
 
