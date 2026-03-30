@@ -15,10 +15,10 @@
     </linearGradient>
   </defs>
 
-  <!-- Background rounded square -->
+  <!-- Background -->
   <rect width="1024" height="1024" rx="224" fill="url(#bgGrad)"/>
 
-  <!-- Subtle grid pattern -->
+  <!-- Subtle grid -->
   <g opacity="0.03" stroke="#fff" stroke-width="1">
     <line x1="0" y1="256" x2="1024" y2="256"/>
     <line x1="0" y1="512" x2="1024" y2="512"/>
@@ -28,7 +28,7 @@
     <line x1="768" y1="0" x2="768" y2="1024"/>
   </g>
 
-  <!-- Waveform bars — left side (speech) -->
+  <!-- Waveform — left -->
   <g transform="translate(100, 310)">
     <rect x="0" y="70" width="32" height="80" rx="16" fill="url(#waveGrad)" opacity="0.5"/>
     <rect x="48" y="40" width="32" height="140" rx="16" fill="url(#waveGrad)" opacity="0.65"/>
@@ -39,7 +39,7 @@
     <rect x="288" y="70" width="32" height="80" rx="16" fill="url(#waveGrad)" opacity="0.45"/>
   </g>
 
-  <!-- Waveform bars — right side (speech, shifted closer) -->
+  <!-- Waveform — right -->
   <g transform="translate(600, 310)">
     <rect x="0" y="70" width="32" height="80" rx="16" fill="url(#waveGrad)" opacity="0.45"/>
     <rect x="48" y="45" width="32" height="130" rx="16" fill="url(#waveGrad)" opacity="0.65"/>
@@ -50,23 +50,24 @@
     <rect x="288" y="75" width="32" height="70" rx="16" fill="url(#waveGrad)" opacity="0.4"/>
   </g>
 
-  <!-- Big scissors in the center -->
+  <!-- Scissors — center, big and bold -->
   <g transform="translate(512, 420)">
-    <!-- Diagonal cut line (background glow) -->
-    <line x1="-30" y1="-180" x2="30" y2="180" stroke="#f43f5e" stroke-width="4" stroke-linecap="round" opacity="0.3"/>
+    <!-- Cut line glow -->
+    <line x1="0" y1="-200" x2="0" y2="200" stroke="#f43f5e" stroke-width="3" stroke-linecap="round" opacity="0.2"/>
 
-    <!-- Top blade -->
-    <ellipse cx="-30" cy="-110" rx="44" ry="44" fill="none" stroke="url(#cutGrad)" stroke-width="10"/>
-    <!-- Bottom blade -->
-    <ellipse cx="-30" cy="110" rx="44" ry="44" fill="none" stroke="url(#cutGrad)" stroke-width="10"/>
+    <!-- Top ring (finger hole) -->
+    <circle cx="-60" cy="-120" r="42" fill="none" stroke="url(#cutGrad)" stroke-width="11"/>
+    <!-- Bottom ring (finger hole) -->
+    <circle cx="-60" cy="120" r="42" fill="none" stroke="url(#cutGrad)" stroke-width="11"/>
 
-    <!-- Handle to pivot — top blade -->
-    <line x1="-10" y1="-72" x2="80" y2="20" stroke="url(#cutGrad)" stroke-width="10" stroke-linecap="round"/>
-    <!-- Handle to pivot — bottom blade -->
-    <line x1="-10" y1="72" x2="80" y2="-20" stroke="url(#cutGrad)" stroke-width="10" stroke-linecap="round"/>
+    <!-- Top blade — long line from ring to far right -->
+    <line x1="-25" y1="-85" x2="140" y2="15" stroke="url(#cutGrad)" stroke-width="11" stroke-linecap="round"/>
+    <!-- Bottom blade — long line from ring to far right -->
+    <line x1="-25" y1="85" x2="140" y2="-15" stroke="url(#cutGrad)" stroke-width="11" stroke-linecap="round"/>
 
-    <!-- Pivot point -->
-    <circle cx="36" cy="0" r="10" fill="#f43f5e"/>
+    <!-- Pivot bolt -->
+    <circle cx="56" cy="0" r="12" fill="#f43f5e"/>
+    <circle cx="56" cy="0" r="6" fill="#1e293b"/>
   </g>
 
   <!-- App name -->
