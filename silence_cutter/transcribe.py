@@ -232,3 +232,90 @@ class Transcriber:
             if result.text:
                 results.append(result)
         return results
+
+
+# ---------------------------------------------------------------------------
+# 세그먼트 경계 후처리 — 조사/접미사 분리 복구
+# ---------------------------------------------------------------------------
+
+# 세그먼트 시작에 위치할 경우 이전 세그먼트로 옮겨야 하는 한국어 조사/어미 패턴.
+# 1~2음절 조사, 어미 접미사.
+_JOSA_SET = frozenset([
+    # 주격/목적격/보격
+    "이", "가", "을", "를", "은", "는", "도", "만",
+    # 부사격/관형격 등
+    "에", "에서", "에게", "의", "와", "과", "로", "으로",
+    "까지", "부터", "마저", "조차", "밖에", "처럼", "같이",
+    "보다", "한테", "더러", "라고", "이라고",
+    # 접속 어미
+    "고", "며", "면", "서",
+    # 기타 자주 분리되는 접미사
+    "들", "것", "중",
+])
+
+
+def merge_orphan_josa(segments: List[TranscribedSegment]) -> List[TranscribedSegment]:
+    """세그먼트 경계에서 분리된 조사를 이전 세그먼트로 병합.
+
+    ForcedAligner가 형태소 단위로 단어를 분리하기 때문에,
+    split_long_speech_segments의 시간 기반 분할 경계에서
+    "맛집" | "을 검색을..." 처럼 조사가 다음 세그먼트로 넘어가는 현상을 보정.
+
+    동작:
+    - 세그먼트의 첫 번째 단어(word)가 조사이면 이전 세그먼트의 마지막에 붙임
+    - 여러 조사가 연속(e.g. "을", "은")이면 모두 이동
+    - 단어가 없는(words==[]) 세그먼트는 텍스트 기준으로 판단
+    """
+    if len(segments) <= 1:
+        return segments
+
+    result = [segments[0]]
+    for seg in segments[1:]:
+        if not seg.words:
+            # words가 없으면 텍스트의 첫 토큰으로 판단
+            first_token = seg.text.strip().split()[0] if seg.text.strip() else ""
+            if first_token in _JOSA_SET and result:
+                prev = result[-1]
+                result[-1] = TranscribedSegment(
+                    seg_start=prev.seg_start,
+                    seg_end=seg.seg_end,
+                    text=(prev.text + " " + seg.text).strip(),
+                    words=prev.words,
+                )
+                continue
+            result.append(seg)
+            continue
+
+        # words가 있는 경우: 앞쪽 조사 단어들을 이전 세그먼트로 이동
+        move_count = 0
+        for w in seg.words:
+            if w.text in _JOSA_SET:
+                move_count += 1
+            else:
+                break
+
+        if move_count > 0 and result and move_count < len(seg.words):
+            moving_words = seg.words[:move_count]
+            remaining_words = seg.words[move_count:]
+
+            prev = result[-1]
+            merged_words = prev.words + moving_words
+            merged_text = " ".join(w.text for w in merged_words)
+            result[-1] = TranscribedSegment(
+                seg_start=prev.seg_start,
+                seg_end=moving_words[-1].end,
+                text=merged_text,
+                words=merged_words,
+            )
+
+            remaining_text = " ".join(w.text for w in remaining_words)
+            result.append(TranscribedSegment(
+                seg_start=remaining_words[0].start,
+                seg_end=seg.seg_end,
+                text=remaining_text,
+                words=remaining_words,
+            ))
+        else:
+            result.append(seg)
+
+    return result

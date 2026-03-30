@@ -140,7 +140,7 @@ def handle_analyze(params: dict) -> dict:
     import subprocess as _sp
 
     from .vad import extract_audio, detect_speech, split_long_speech_segments
-    from .transcribe import Transcriber
+    from .transcribe import Transcriber, merge_orphan_josa
 
     # 1. probe
     _progress("analyze", 0, "영상 정보 분석 중")
@@ -226,6 +226,9 @@ def handle_analyze(params: dict) -> dict:
         result = transcriber.transcribe_segment(audio_path, seg.start, seg.end)
         if result.text:
             results.append(result)
+
+    # 세그먼트 경계에서 분리된 조사를 이전 세그먼트로 병합
+    results = merge_orphan_josa(results)
 
     try:
         audio_path.unlink()
