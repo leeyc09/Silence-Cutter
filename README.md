@@ -180,29 +180,6 @@ rm -rf ~/.cache/huggingface/hub/models--mlx-community--Qwen3-*
 
 ---
 
-## 🌐 Web UI
-
-Gradio 기반 브라우저 인터페이스. 5개 탭으로 모든 기능을 지원합니다.
-
-<div align="center">
-<img src="docs/screenshot.png" width="720" alt="Web UI screenshot"/>
-</div>
-
-```bash
-./run.sh                          # 기본 실행 (포트 7860)
-./run.sh --port 8080 --share      # 포트 지정 + 공유 링크
-```
-
-| 탭 | 설명 |
-|:---|:-----|
-| **무음 컷** | 영상 → 무음 제거 + 자막 FCPXML |
-| **VAD 자막 생성** | 원본 타임라인 기준 SRT/iTT |
-| **자막 재생성** | 편집된 FCPXML 자막 재생성 |
-| **VAD 대본 추출** | 대본 텍스트 추출 |
-| **FCPXML 자막 추출** | FCPXML 내 타이틀 텍스트 추출 |
-
----
-
 ## ⌨️ CLI 명령어
 
 ```bash
@@ -318,7 +295,6 @@ pip install -e .
 | `soundfile` | WAV I/O |
 | `numpy<2` | 수치 연산 |
 | `soynlp` | 한국어 토크나이제이션 (ForcedAligner) |
-| `gradio` | Web UI |
 
 ---
 
@@ -388,7 +364,6 @@ Qwen3-TTS-Mac/
 │   ├── fcpxml.py                    # FCPXML 생성 + 자막 분할
 │   ├── srt.py / itt.py              # SRT, iTT 자막
 │   ├── pipeline.py                  # CLI 파이프라인
-│   ├── app.py                       # Gradio Web UI
 │   └── ...
 ├── SilenceCutterApp/                # Swift macOS 앱
 │   ├── Package.swift
@@ -413,7 +388,6 @@ Qwen3-TTS-Mac/
 │           └── ...
 ├── build-release.sh                 # 릴리스 빌드 → dist/SilenceCutterApp.app
 ├── setup_mac.sh                     # Python 환경 자동 설치
-├── run.sh                           # Web UI 실행
 └── docs/                            # 다이어그램, 스크린샷
 ```
 
