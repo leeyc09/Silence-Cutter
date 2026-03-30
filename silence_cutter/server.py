@@ -605,7 +605,7 @@ def handle_resub(params: dict) -> dict:
 
     _progress("analyze", 15, f"Found {len(clips)} clips")
 
-    # 4. ASR each clip
+    # 4. ASR each clip independently, map words to timeline time
     max_seg_sec = params.get("max_segment_seconds", 8.0)
     transcriber = Transcriber(
         asr_model=params.get("asr_model", "mlx-community/Qwen3-ASR-0.6B-8bit"),
@@ -614,21 +614,56 @@ def handle_resub(params: dict) -> dict:
         on_progress=lambda phase, pct, detail: _progress(phase, pct, detail),
     )
 
-    all_words = []
+    # Process each clip → produce per-clip segments with timeline times
+    # FCP clips may overlap in source time (user extended a clip) or be reordered.
+    # We ASR each clip independently and remap to timeline offsets.
+    all_clip_segments = []
     total = len(clips)
     for i, clip in enumerate(clips):
         pct = 20 + int(60 * (i / total))
         _progress("analyze", pct, f"Transcribing clip ({i + 1}/{total})")
 
         result = transcriber.transcribe_segment(audio_path, clip["src_start"], clip["src_end"])
+
+        if not result.text and not result.words:
+            continue
+
+        # Remap word times: source → timeline
+        # timeline_time = timeline_offset + (source_time - src_start)
+        tl_offset = clip["timeline_offset"]
+        src_start = clip["src_start"]
+
         if result.words:
-            all_words.extend(result.words)
+            tl_words = []
+            for w in result.words:
+                # Clamp to clip source boundaries
+                w_start = max(w.start, clip["src_start"])
+                w_end = min(w.end, clip["src_end"])
+                if w_end <= w_start:
+                    continue
+                tl_words.append(WordTimestamp(
+                    text=w.text,
+                    start=tl_offset + (w_start - src_start),
+                    end=tl_offset + (w_end - src_start),
+                ))
+            if tl_words:
+                # Split this clip's words into segments
+                clip_segments = _split_words_into_segments(tl_words, max_seg_sec)
+                all_clip_segments.extend(clip_segments)
         elif result.text:
-            all_words.append(WordTimestamp(
-                text=result.text, start=result.seg_start, end=result.seg_end,
+            # No word timestamps — single segment for entire clip
+            all_clip_segments.append(TranscribedSegment(
+                seg_start=tl_offset,
+                seg_end=tl_offset + clip["duration"],
+                text=result.text,
+                words=[WordTimestamp(
+                    text=result.text,
+                    start=tl_offset,
+                    end=tl_offset + clip["duration"],
+                )],
             ))
 
-    if not all_words:
+    if not all_clip_segments:
         try:
             from pathlib import Path as _P
             _P(audio_path).unlink()
@@ -640,19 +675,16 @@ def handle_resub(params: dict) -> dict:
             "video_info": {"fps": fps, "width": width, "height": height, "duration": duration},
         }
 
-    # 5. Split words into segments (same as handle_analyze)
-    _progress("analyze", 85, "Splitting into segments…")
-    raw_segments = _split_words_into_segments(all_words, max_seg_sec)
-
     # Orphan josa merge (Korean)
+    _progress("analyze", 85, "Post-processing…")
     lang = params.get("language", "Korean")
     if lang.lower() in ("korean", "ko"):
-        raw_segments = merge_orphan_josa(raw_segments)
+        all_clip_segments = merge_orphan_josa(all_clip_segments)
 
-    # 6. Build response
+    # 6. Build response (segments are already in timeline order)
     _progress("analyze", 95, "Building response…")
     out_segments = []
-    for seg in raw_segments:
+    for seg in all_clip_segments:
         out_segments.append({
             "seg_start": seg.seg_start,
             "seg_end": seg.seg_end,
