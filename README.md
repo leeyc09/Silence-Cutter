@@ -236,11 +236,22 @@ open dist/SilenciApp.app          # Launch
 
 1. Download `Silenci-vX.X.X-macOS.dmg` from [Releases](https://github.com/leeyc09/Silence-Cutter/releases)
 2. Open DMG → drag `SilenciApp` to Applications
-3. **Important (unsigned app):** Before first launch, run in Terminal:
+3. **Allow the app in macOS Security settings:**
+
+   > macOS blocks apps from unidentified developers by default.
+   > On first launch, you'll see **"SilenciApp cannot be opened"** — this is normal.
+
+   **Option A — System Settings (recommended):**
+   1. Open **System Settings** → **Privacy & Security**
+   2. Scroll down — you'll see *"SilenciApp" was blocked from use because it is not from an identified developer*
+   3. Click **Open Anyway** → confirm in the dialog
+
+   **Option B — Terminal:**
    ```bash
    xattr -cr /Applications/SilenciApp.app
    ```
-4. Open the app — Python environment auto-installs on first launch (~45s)
+
+4. Open the app — Homebrew, Python, ffmpeg, and AI models install automatically on first launch (~45s)
 
 ### First Launch — Auto Setup
 
@@ -361,22 +372,21 @@ silence-cutter extract timeline.fcpxml -t -o script.txt
 | Item | Requirement |
 |:----:|:------------|
 | **OS** | macOS 14.0+ (Apple Silicon) |
-| **Python** | 3.10+ |
-| **ffmpeg** | ffmpeg, ffprobe |
-| **Disk** | ~2-4 GB for ASR models |
+| **Disk** | ~2-4 GB for Python venv + ASR models |
 
-### Quick Install
+> **Python, ffmpeg, Homebrew** are all **auto-installed** on first launch if not present. No manual setup needed.
 
-```bash
-./setup_mac.sh
-```
+### macOS App (Recommended)
 
-### Manual Install
+Download from [Releases](https://github.com/leeyc09/Silence-Cutter/releases) → see [Install from DMG](#install-from-dmg) above.
+
+### CLI (for scripting/automation)
 
 ```bash
 brew install ffmpeg
 python3 -m venv .venv && source .venv/bin/activate
 pip install -e .
+silence-cutter cut input.mp4
 ```
 
 ### Dependencies
