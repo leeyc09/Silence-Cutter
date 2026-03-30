@@ -39,9 +39,9 @@ struct ClipCardView: View {
                 .stroke(isActive ? Color.cyan.opacity(0.5) : Color.white.opacity(0.1), lineWidth: 1)
         )
         .contextMenu {
-            Button("클립 분할") { onSplit() }
+            Button(L10n.tr("clip.split")) { onSplit() }
             if let onMerge {
-                Button("다음 클립과 병합") { onMerge() }
+                Button(L10n.tr("clip.merge_next")) { onMerge() }
             }
         }
     }
@@ -50,7 +50,7 @@ struct ClipCardView: View {
 
     private var headerSection: some View {
         HStack(spacing: 6) {
-            Text("클립 \(index + 1)")
+            Text(L10n.tr("clip.title", index + 1))
                 .font(.caption2.bold())
                 .foregroundStyle(.secondary)
 
@@ -85,7 +85,7 @@ struct ClipCardView: View {
                 Image(systemName: "film")
                     .font(.caption2)
                     .foregroundStyle(.tertiary)
-                Text("영상편집")
+                Text(L10n.tr("clip.video_edit"))
                     .font(.caption2)
                     .foregroundStyle(.tertiary)
             }
@@ -101,11 +101,11 @@ struct ClipCardView: View {
                 Image(systemName: "text.quote")
                     .font(.caption2)
                     .foregroundStyle(.cyan.opacity(0.7))
-                Text("자막수정")
+                Text(L10n.tr("clip.subtitle_edit"))
                     .font(.caption2)
                     .foregroundStyle(.cyan.opacity(0.7))
             }
-            TextField("자막 텍스트", text: $segment.text, axis: .vertical)
+            TextField(L10n.tr("clip.subtitle_placeholder"), text: $segment.text, axis: .vertical)
                 .font(.body)
                 .lineLimit(1...5)
                 .textFieldStyle(.plain)
@@ -132,7 +132,7 @@ struct ClipCardView: View {
                 .fill(Color.red.opacity(0.3))
                 .frame(width: 3, height: 16)
 
-            Text("클립 \(index + 1) — 삭제됨")
+            Text(L10n.tr("clip.deleted", index + 1))
                 .font(.caption2)
                 .foregroundStyle(.secondary)
 
@@ -142,7 +142,7 @@ struct ClipCardView: View {
 
             Spacer()
 
-            Button("복구") {
+            Button(L10n.tr("clip.restore")) {
                 segment.isKept = true
             }
             .font(.caption2)

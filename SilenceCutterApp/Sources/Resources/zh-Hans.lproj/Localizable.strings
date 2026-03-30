@@ -1,0 +1,102 @@
+/* Simplified Chinese */
+
+// MARK: - App Menu
+"menu.remove_env" = "删除Python环境 (%@)…";
+"menu.remove_confirm_title" = "确定要删除Python环境吗？";
+"menu.remove_confirm_delete" = "删除";
+"menu.remove_confirm_cancel" = "取消";
+"menu.remove_confirm_message" = "路径: %@\n大小: %@\n\n删除后下次启动时将重新安装。";
+
+// MARK: - Setup Overlay
+"setup.checking" = "正在检查环境…";
+"setup.installing_title" = "正在安装Python环境";
+"setup.installing_subtitle" = "仅在首次启动时需要";
+"setup.failed_title" = "环境安装失败";
+"setup.retry" = "重试";
+
+// MARK: - Main Content
+"main.load_video" = "请加载一个视频";
+"main.transcript" = "Transcript";
+
+// MARK: - Video Preview
+"preview.placeholder" = "拖放视频文件到此处\n或使用打开按钮";
+
+// MARK: - Toolbar
+"toolbar.open" = "打开";
+"toolbar.analyze" = "分析";
+"toolbar.remove_silence" = "去除静音";
+"toolbar.find" = "查找";
+"toolbar.export" = "导出";
+"toolbar.settings" = "设置";
+
+// MARK: - Analyze Dialog
+"dialog.title" = "分析设置";
+"dialog.speech_recognition" = "语音识别";
+"dialog.language" = "语言";
+"dialog.model" = "模型";
+"dialog.silence_detection" = "静音检测";
+"dialog.sensitivity" = "灵敏度";
+"dialog.sensitivity_hint" = "越低越敏感（小声也会被识别为语音）";
+"dialog.min_silence" = "最小静音";
+"dialog.padding" = "填充";
+"dialog.subtitle" = "字幕";
+"dialog.max_clip" = "最大片段";
+"dialog.max_chars" = "每行最大";
+"dialog.chars_unit" = "字";
+"dialog.font" = "字体";
+"dialog.defaults" = "默认值";
+"dialog.cancel" = "取消";
+"dialog.start" = "开始分析";
+"dialog.seconds_unit" = "%d秒";
+
+// MARK: - Analysis Progress
+"progress.preparing" = "正在准备分析…";
+"progress.cancel" = "取消";
+"progress.analysis" = "分析";
+"progress.model_download" = "正在下载AI模型";
+"progress.phase_analyze" = "分析中";
+"progress.phase_vad" = "语音检测中";
+
+// MARK: - Clip Card
+"clip.title" = "片段 %d";
+"clip.split" = "分割片段";
+"clip.merge_next" = "与下一片段合并";
+"clip.video_edit" = "视频编辑";
+"clip.subtitle_edit" = "字幕编辑";
+"clip.subtitle_placeholder" = "字幕文本";
+"clip.deleted" = "片段 %d — 已删除";
+"clip.restore" = "恢复";
+
+// MARK: - Word Flow
+"word.split_here" = "在此处分割片段";
+
+// MARK: - Find & Replace
+"find.search" = "查找";
+"find.replace" = "替换";
+"find.replace_all" = "全部替换";
+"find.replaced_count" = "已替换 %d 处";
+
+// MARK: - Transcript Editor
+"transcript.no_results" = "没有分析结果";
+"transcript.no_speech" = "未检测到语音。";
+
+// MARK: - Settings View
+"settings.title" = "分析设置";
+"settings.speech_recognition" = "语音识别";
+"settings.language" = "语言";
+"settings.asr_model" = "ASR模型";
+"settings.vad" = "静音检测 (VAD)";
+"settings.sensitivity" = "灵敏度";
+"settings.sensitivity_hint" = "越低越敏感（小声也会被识别为语音）";
+"settings.min_silence" = "最小静音";
+"settings.min_speech" = "最小语音";
+"settings.padding" = "填充";
+"settings.segment" = "片段分割";
+"settings.max_length" = "最大长度";
+"settings.max_length_hint" = "单个片段最大长度（在词边界分割）";
+"settings.subtitle" = "字幕";
+"settings.max_chars" = "每行最大";
+"settings.chars_unit" = "字";
+"settings.font_size" = "字体大小";
+"settings.reset" = "恢复默认设置";
+"settings.seconds_unit" = "%d秒";

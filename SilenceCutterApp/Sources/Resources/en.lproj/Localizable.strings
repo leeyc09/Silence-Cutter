@@ -1,0 +1,102 @@
+/* English — Base localization */
+
+// MARK: - App Menu
+"menu.remove_env" = "Remove Python Environment (%@)…";
+"menu.remove_confirm_title" = "Remove Python environment?";
+"menu.remove_confirm_delete" = "Remove";
+"menu.remove_confirm_cancel" = "Cancel";
+"menu.remove_confirm_message" = "Path: %@\nSize: %@\n\nWill be reinstalled on next launch.";
+
+// MARK: - Setup Overlay
+"setup.checking" = "Checking environment…";
+"setup.installing_title" = "Installing Python Environment";
+"setup.installing_subtitle" = "Only required on first launch";
+"setup.failed_title" = "Environment Setup Failed";
+"setup.retry" = "Retry";
+
+// MARK: - Main Content
+"main.load_video" = "Load a video to begin";
+"main.transcript" = "Transcript";
+
+// MARK: - Video Preview
+"preview.placeholder" = "Drag a video file here\nor use the Open button";
+
+// MARK: - Toolbar
+"toolbar.open" = "Open";
+"toolbar.analyze" = "Analyze";
+"toolbar.remove_silence" = "Cut Silence";
+"toolbar.find" = "Find";
+"toolbar.export" = "Export";
+"toolbar.settings" = "Settings";
+
+// MARK: - Analyze Dialog
+"dialog.title" = "Analysis Settings";
+"dialog.speech_recognition" = "Speech Recognition";
+"dialog.language" = "Language";
+"dialog.model" = "Model";
+"dialog.silence_detection" = "Silence Detection";
+"dialog.sensitivity" = "Sensitivity";
+"dialog.sensitivity_hint" = "Lower = more sensitive (detects quiet speech)";
+"dialog.min_silence" = "Min Silence";
+"dialog.padding" = "Padding";
+"dialog.subtitle" = "Subtitle";
+"dialog.max_clip" = "Max Clip";
+"dialog.max_chars" = "Max Chars";
+"dialog.chars_unit" = "chars";
+"dialog.font" = "Font";
+"dialog.defaults" = "Defaults";
+"dialog.cancel" = "Cancel";
+"dialog.start" = "Start Analysis";
+"dialog.seconds_unit" = "%ds";
+
+// MARK: - Analysis Progress
+"progress.preparing" = "Preparing analysis…";
+"progress.cancel" = "Cancel";
+"progress.analysis" = "Analysis";
+"progress.model_download" = "Downloading AI Model";
+"progress.phase_analyze" = "Analyzing";
+"progress.phase_vad" = "Detecting Speech";
+
+// MARK: - Clip Card
+"clip.title" = "Clip %d";
+"clip.split" = "Split Clip";
+"clip.merge_next" = "Merge with Next Clip";
+"clip.video_edit" = "Video Edit";
+"clip.subtitle_edit" = "Subtitle Edit";
+"clip.subtitle_placeholder" = "Subtitle text";
+"clip.deleted" = "Clip %d — Deleted";
+"clip.restore" = "Restore";
+
+// MARK: - Word Flow
+"word.split_here" = "Split Clip Here";
+
+// MARK: - Find & Replace
+"find.search" = "Find";
+"find.replace" = "Replace";
+"find.replace_all" = "Replace All";
+"find.replaced_count" = "%d replaced";
+
+// MARK: - Transcript Editor
+"transcript.no_results" = "No analysis results";
+"transcript.no_speech" = "No speech was detected.";
+
+// MARK: - Settings View
+"settings.title" = "Analysis Settings";
+"settings.speech_recognition" = "Speech Recognition";
+"settings.language" = "Language";
+"settings.asr_model" = "ASR Model";
+"settings.vad" = "Silence Detection (VAD)";
+"settings.sensitivity" = "Sensitivity";
+"settings.sensitivity_hint" = "Lower = more sensitive (detects quiet speech)";
+"settings.min_silence" = "Min Silence";
+"settings.min_speech" = "Min Speech";
+"settings.padding" = "Padding";
+"settings.segment" = "Segment Splitting";
+"settings.max_length" = "Max Length";
+"settings.max_length_hint" = "Maximum clip length (split at word boundaries)";
+"settings.subtitle" = "Subtitle";
+"settings.max_chars" = "Max Chars";
+"settings.chars_unit" = "chars";
+"settings.font_size" = "Font Size";
+"settings.reset" = "Reset to Defaults";
+"settings.seconds_unit" = "%ds";

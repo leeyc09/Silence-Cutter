@@ -1,0 +1,102 @@
+/* Japanese */
+
+// MARK: - App Menu
+"menu.remove_env" = "Python環境を削除 (%@)…";
+"menu.remove_confirm_title" = "Python環境を削除しますか？";
+"menu.remove_confirm_delete" = "削除";
+"menu.remove_confirm_cancel" = "キャンセル";
+"menu.remove_confirm_message" = "パス: %@\nサイズ: %@\n\n削除後、次回起動時に再インストールされます。";
+
+// MARK: - Setup Overlay
+"setup.checking" = "環境を確認中…";
+"setup.installing_title" = "Python環境をインストール中";
+"setup.installing_subtitle" = "初回起動時のみ必要です";
+"setup.failed_title" = "環境のセットアップに失敗";
+"setup.retry" = "再試行";
+
+// MARK: - Main Content
+"main.load_video" = "動画を読み込んでください";
+"main.transcript" = "Transcript";
+
+// MARK: - Video Preview
+"preview.placeholder" = "動画ファイルをドラッグ\nまたはファイルを開くボタンを使用";
+
+// MARK: - Toolbar
+"toolbar.open" = "開く";
+"toolbar.analyze" = "分析";
+"toolbar.remove_silence" = "無音除去";
+"toolbar.find" = "検索";
+"toolbar.export" = "書き出し";
+"toolbar.settings" = "設定";
+
+// MARK: - Analyze Dialog
+"dialog.title" = "分析設定";
+"dialog.speech_recognition" = "音声認識";
+"dialog.language" = "言語";
+"dialog.model" = "モデル";
+"dialog.silence_detection" = "無音検出";
+"dialog.sensitivity" = "感度";
+"dialog.sensitivity_hint" = "低いほど敏感（小さな音も音声として認識）";
+"dialog.min_silence" = "最小無音";
+"dialog.padding" = "パディング";
+"dialog.subtitle" = "字幕";
+"dialog.max_clip" = "最大クリップ";
+"dialog.max_chars" = "最大文字数";
+"dialog.chars_unit" = "文字";
+"dialog.font" = "フォント";
+"dialog.defaults" = "デフォルト";
+"dialog.cancel" = "キャンセル";
+"dialog.start" = "分析開始";
+"dialog.seconds_unit" = "%d秒";
+
+// MARK: - Analysis Progress
+"progress.preparing" = "分析を準備中…";
+"progress.cancel" = "キャンセル";
+"progress.analysis" = "分析";
+"progress.model_download" = "AIモデルをダウンロード中";
+"progress.phase_analyze" = "分析中";
+"progress.phase_vad" = "音声検出中";
+
+// MARK: - Clip Card
+"clip.title" = "クリップ %d";
+"clip.split" = "クリップを分割";
+"clip.merge_next" = "次のクリップと結合";
+"clip.video_edit" = "映像編集";
+"clip.subtitle_edit" = "字幕編集";
+"clip.subtitle_placeholder" = "字幕テキスト";
+"clip.deleted" = "クリップ %d — 削除済み";
+"clip.restore" = "復元";
+
+// MARK: - Word Flow
+"word.split_here" = "ここでクリップを分割";
+
+// MARK: - Find & Replace
+"find.search" = "検索";
+"find.replace" = "置換";
+"find.replace_all" = "すべて置換";
+"find.replaced_count" = "%d件 置換";
+
+// MARK: - Transcript Editor
+"transcript.no_results" = "分析結果がありません";
+"transcript.no_speech" = "音声が検出されませんでした。";
+
+// MARK: - Settings View
+"settings.title" = "分析設定";
+"settings.speech_recognition" = "音声認識";
+"settings.language" = "言語";
+"settings.asr_model" = "ASRモデル";
+"settings.vad" = "無音検出 (VAD)";
+"settings.sensitivity" = "感度";
+"settings.sensitivity_hint" = "低いほど敏感（小さな音も音声として認識）";
+"settings.min_silence" = "最小無音";
+"settings.min_speech" = "最小音声";
+"settings.padding" = "パディング";
+"settings.segment" = "セグメント分割";
+"settings.max_length" = "最大長";
+"settings.max_length_hint" = "クリップの最大長（単語境界で分割）";
+"settings.subtitle" = "字幕";
+"settings.max_chars" = "最大文字数";
+"settings.chars_unit" = "文字";
+"settings.font_size" = "フォントサイズ";
+"settings.reset" = "デフォルトに戻す";
+"settings.seconds_unit" = "%d秒";

@@ -18,9 +18,9 @@ struct TranscriptEditorView: View {
     var body: some View {
         if analysisService.segments.isEmpty {
             ContentUnavailableView(
-                "분석 결과가 없습니다",
+                L10n.tr("transcript.no_results"),
                 systemImage: "text.magnifyingglass",
-                description: Text("음성이 감지되지 않았습니다.")
+                description: Text(L10n.tr("transcript.no_speech"))
             )
         } else {
             ScrollViewReader { proxy in

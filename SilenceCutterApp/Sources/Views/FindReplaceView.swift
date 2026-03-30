@@ -14,15 +14,15 @@ struct FindReplaceView: View {
             Image(systemName: "magnifyingglass")
                 .foregroundStyle(.secondary)
 
-            TextField("찾기", text: $searchText)
+            TextField(L10n.tr("find.search"), text: $searchText)
                 .textFieldStyle(.roundedBorder)
                 .frame(maxWidth: 150)
 
-            TextField("치환", text: $replaceText)
+            TextField(L10n.tr("find.replace"), text: $replaceText)
                 .textFieldStyle(.roundedBorder)
                 .frame(maxWidth: 150)
 
-            Button("전체 치환") {
+            Button(L10n.tr("find.replace_all")) {
                 let before = analysisService.segments.map(\.text).joined()
                 analysisService.replaceAll(search: searchText, with: replaceText)
                 // Count approximate replacements
@@ -33,7 +33,7 @@ struct FindReplaceView: View {
             .disabled(searchText.isEmpty)
 
             if showResult {
-                Text("\(replacedCount)건 치환")
+                Text(L10n.tr("find.replaced_count", replacedCount))
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }

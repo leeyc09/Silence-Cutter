@@ -41,13 +41,23 @@ mkdir -p "$CONTENTS/Resources"
 cp "$BINARY" "$CONTENTS/MacOS/SilenceCutterApp"
 
 # 3. Copy Python module
-echo "[3/4] Bundling Python module…"
+echo "[3/5] Bundling Python module…"
 rsync -a --exclude='__pycache__' "$PROJECT_ROOT/silence_cutter/" "$CONTENTS/Resources/silence_cutter/"
 cp "$PROJECT_ROOT/pyproject.toml" "$CONTENTS/Resources/pyproject.toml"
 echo "  ✅ silence_cutter/ → Resources/"
 
-# 4. Write Info.plist
-echo "[4/4] Writing Info.plist…"
+# 4. Copy SwiftPM resource bundle (localization strings etc.)
+echo "[4/5] Bundling SwiftPM resources…"
+RESOURCE_BUNDLE=$(find "$SWIFT_PKG/.build" -name "SilenceCutterApp_SilenceCutterApp.bundle" -type d | head -1)
+if [ -n "$RESOURCE_BUNDLE" ]; then
+    cp -R "$RESOURCE_BUNDLE" "$CONTENTS/Resources/"
+    echo "  ✅ $(basename "$RESOURCE_BUNDLE") → Resources/"
+else
+    echo "  ⚠️ No SwiftPM resource bundle found (localization may not work)"
+fi
+
+# 5. Write Info.plist
+echo "[5/5] Writing Info.plist…"
 cat > "$CONTENTS/Info.plist" << 'PLIST'
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"

@@ -15,12 +15,10 @@ struct ContentView: View {
 
     var body: some View {
         ZStack {
-            // Main content — only interactive when Python env is ready
             mainContent
                 .disabled(!pythonEnv.state.isReady)
                 .opacity(pythonEnv.state.isReady ? 1 : 0.3)
 
-            // Setup overlay when not ready
             if !pythonEnv.state.isReady {
                 setupOverlay
             }
@@ -37,14 +35,14 @@ struct ContentView: View {
             case .notStarted, .checking:
                 ProgressView()
                     .scaleEffect(1.5)
-                Text("환경 확인 중…")
+                Text(L10n.tr("setup.checking"))
                     .font(.headline)
 
             case .installing(let detail):
                 VStack(spacing: 12) {
-                    Text("Python 환경 설치 중")
+                    Text(L10n.tr("setup.installing_title"))
                         .font(.title2.bold())
-                    Text("처음 실행 시에만 필요합니다")
+                    Text(L10n.tr("setup.installing_subtitle"))
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
 
@@ -61,7 +59,7 @@ struct ContentView: View {
                     Image(systemName: "exclamationmark.triangle.fill")
                         .font(.largeTitle)
                         .foregroundStyle(.yellow)
-                    Text("환경 설치 실패")
+                    Text(L10n.tr("setup.failed_title"))
                         .font(.title2.bold())
                     Text(message)
                         .font(.caption)
@@ -69,14 +67,14 @@ struct ContentView: View {
                         .multilineTextAlignment(.center)
                         .frame(maxWidth: 400)
 
-                    Button("다시 시도") {
+                    Button(L10n.tr("setup.retry")) {
                         Task { await pythonEnv.retry() }
                     }
                     .buttonStyle(.borderedProminent)
                 }
 
             case .ready:
-                EmptyView() // Won't show — overlay hidden when ready
+                EmptyView()
             }
         }
         .padding(40)
@@ -87,12 +85,11 @@ struct ContentView: View {
 
     private var mainContent: some View {
         NavigationSplitView {
-            // Left panel — transcript / analysis
             VStack(spacing: 0) {
                 HStack {
                     Image(systemName: "text.quote")
                         .foregroundStyle(.cyan)
-                    Text("Transcript")
+                    Text(L10n.tr("main.transcript"))
                         .font(.headline)
                 }
                 .padding(.top, 10)
@@ -108,12 +105,11 @@ struct ContentView: View {
                     TranscriptEditorView(analysisService: analysisService, onSeek: { videoModel.seek(to: $0) }, currentTime: videoModel.currentTime)
                 } else {
                     Spacer()
-                    Text("영상을 불러오세요")
+                    Text(L10n.tr("main.load_video"))
                         .foregroundStyle(.secondary)
                     Spacer()
                 }
 
-                // Inline error display
                 if let errorMsg = analysisService.error {
                     HStack(spacing: 4) {
                         Image(systemName: "exclamationmark.triangle.fill")
@@ -127,7 +123,6 @@ struct ContentView: View {
                     .padding(.vertical, 4)
                 }
 
-                // Bridge diagnostics (hidden in production — use --test-bridge CLI)
                 if !bridgeStatus.isEmpty {
                     Text(bridgeStatus)
                         .font(.caption)
@@ -138,15 +133,12 @@ struct ContentView: View {
             }
             .frame(minWidth: 250)
         } detail: {
-            // Right panel — video preview + timeline
             VStack(spacing: 0) {
-                // Video player (S02)
                 VideoPreviewView(model: videoModel)
                     .frame(maxHeight: .infinity)
 
                 Divider()
 
-                // Timeline bar (S05)
                 TimelineBarView(
                     segments: analysisService.segments,
                     duration: videoModel.duration,
@@ -157,7 +149,6 @@ struct ContentView: View {
 
                 Divider()
 
-                // Find & Replace bar
                 if showFindReplace {
                     FindReplaceView(analysisService: analysisService, isVisible: $showFindReplace)
                     Divider()
@@ -176,13 +167,13 @@ struct ContentView: View {
                             }
                         }
                     } label: {
-                        Label("열기", systemImage: "folder")
+                        Label(L10n.tr("toolbar.open"), systemImage: "folder")
                     }
 
                     Button {
                         showAnalyzeDialog = true
                     } label: {
-                        Label("분석", systemImage: "waveform.badge.magnifyingglass")
+                        Label(L10n.tr("toolbar.analyze"), systemImage: "waveform.badge.magnifyingglass")
                     }
                     .disabled(videoModel.videoURL == nil || analysisService.isAnalyzing)
 
@@ -191,14 +182,14 @@ struct ContentView: View {
                     Button {
                         analysisService.removeDiscardedSegments()
                     } label: {
-                        Label("무음 제거", systemImage: "scissors")
+                        Label(L10n.tr("toolbar.remove_silence"), systemImage: "scissors")
                     }
                     .disabled(analysisService.segments.isEmpty)
 
                     Button {
                         showFindReplace.toggle()
                     } label: {
-                        Label("찾기", systemImage: "magnifyingglass")
+                        Label(L10n.tr("toolbar.find"), systemImage: "magnifyingglass")
                     }
                     .disabled(analysisService.segments.isEmpty)
 
@@ -209,21 +200,20 @@ struct ContentView: View {
                             }
                         }
                     } label: {
-                        Label("내보내기", systemImage: "square.and.arrow.up")
+                        Label(L10n.tr("toolbar.export"), systemImage: "square.and.arrow.up")
                     }
                     .disabled(analysisService.segments.isEmpty)
 
                     Button {
                         showSettings.toggle()
                     } label: {
-                        Label("설정", systemImage: "gearshape")
+                        Label(L10n.tr("toolbar.settings"), systemImage: "gearshape")
                     }
                 }
                 .padding(8)
             }
         }
         .background {
-            // Hidden button for Cmd+F keyboard shortcut
             Button("") {
                 showFindReplace.toggle()
             }
@@ -247,22 +237,18 @@ struct ContentView: View {
 
     // MARK: - Export
 
-    /// Opens NSSavePanel and writes the exported format file to disk.
     private func exportFile(format: ExportFormat) {
         let panel = NSSavePanel()
 
-        // Map format to UTType
         switch format {
         case .srt:
             panel.allowedContentTypes = [.plainText]
         case .fcpxml:
             panel.allowedContentTypes = [.xml]
         case .itt:
-            // iTT uses .itt extension — allow any file type so NSSavePanel respects the extension
             panel.allowedContentTypes = [.data]
         }
 
-        // Default filename from video name + format extension
         let baseName: String
         if let videoURL = videoModel.videoURL {
             baseName = videoURL.deletingPathExtension().lastPathComponent
@@ -279,7 +265,6 @@ struct ContentView: View {
             case .srt:
                 content = ExportService.generateSRT(segments: analysisService.segments, maxSubtitleChars: settings.maxSubtitleChars)
             case .fcpxml:
-                // Use actual videoInfo if available, fall back to sensible defaults
                 let info = analysisService.videoInfo ?? VideoInfo(
                     fps: 30,
                     width: 1920,
@@ -307,7 +292,6 @@ struct ContentView: View {
 
     // MARK: - Bridge test
 
-    /// Walk up from cwd to find the directory containing `silence_cutter/`.
     private func findProjectRoot() -> String {
         let fm = FileManager.default
         var dir = URL(fileURLWithPath: fm.currentDirectoryPath)
@@ -322,24 +306,24 @@ struct ContentView: View {
 
     private func testBridge() async {
         isTesting = true
-        bridgeStatus = "Python 프로세스 시작 중…"
+        bridgeStatus = "Starting Python process…"
 
         bridge.projectRoot = findProjectRoot()
 
         do {
             try bridge.start()
-            bridgeStatus = "ping 전송 중…"
+            bridgeStatus = "Sending ping…"
 
             let result = try await bridge.call("ping", timeout: 10)
             if case .string(let value) = result, value == "pong" {
-                bridgeStatus = "✅ ping → pong 왕복 성공"
+                bridgeStatus = "✅ ping → pong round-trip OK"
             } else {
-                bridgeStatus = "⚠️ 예상치 못한 응답: \(result)"
+                bridgeStatus = "⚠️ Unexpected response: \(result)"
             }
 
             bridge.stop()
         } catch {
-            bridgeStatus = "❌ 오류: \(error)"
+            bridgeStatus = "❌ Error: \(error)"
             bridge.stop()
         }
 

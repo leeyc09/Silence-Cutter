@@ -132,7 +132,7 @@ final class PythonEnvironment {
     /// Human-readable size string (e.g. "1.4 GB").
     var installedSizeString: String {
         let bytes = installedSize
-        guard bytes > 0 else { return "설치되지 않음" }
+        guard bytes > 0 else { return "Not installed" }
         let formatter = ByteCountFormatter()
         formatter.countStyle = .file
         return formatter.string(fromByteCount: bytes)
@@ -198,7 +198,7 @@ final class PythonEnvironment {
 
         // Create venv (or recreate if version mismatch)
         if fm.fileExists(atPath: venvDir.path) {
-            state = .installing(detail: "기존 환경 정리 중…")
+            state = .installing(detail: "Cleaning up existing environment…")
             try fm.removeItem(at: venvDir)
         }
 
@@ -220,7 +220,7 @@ final class PythonEnvironment {
 
         // Write version stamp
         progress = 0.98
-        state = .installing(detail: "환경 설정 마무리 중…")
+        state = .installing(detail: "Finishing environment setup…")
         try Self.envVersion.write(to: versionFile, atomically: true, encoding: .utf8)
 
         return venvPython.path
@@ -282,7 +282,7 @@ enum PythonEnvError: Error, LocalizedError {
     var errorDescription: String? {
         switch self {
         case .commandFailed(let cmd, let msg):
-            "명령 실행 실패: \(cmd)\n\(msg)"
+            "Command failed: \(cmd)\n\(msg)"
         case .pythonNotFound:
             "Python 3을 찾을 수 없습니다. python3을 먼저 설치해주세요."
         }

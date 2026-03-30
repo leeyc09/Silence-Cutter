@@ -33,7 +33,7 @@ struct WordFlowView: View {
                     }
                     .contextMenu {
                         if let onSplitAt, index > 0 {
-                            Button("여기서 클립 분할") {
+                            Button(L10n.tr("word.split_here")) {
                                 onSplitAt(index)
                             }
                         }

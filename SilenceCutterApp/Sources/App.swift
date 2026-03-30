@@ -38,24 +38,24 @@ struct SilenceCutterApp: App {
         .defaultSize(width: 1200, height: 800)
         .commands {
             CommandGroup(after: .appInfo) {
-                Button("Python 환경 삭제 (\(pythonEnv.installedSizeString))…") {
+                Button(L10n.tr("menu.remove_env", pythonEnv.installedSizeString)) {
                     showRemoveConfirm = true
                 }
                 .disabled(!pythonEnv.isInstalled)
                 .confirmationDialog(
-                    "Python 환경을 삭제하시겠습니까?",
+                    L10n.tr("menu.remove_confirm_title"),
                     isPresented: $showRemoveConfirm
                 ) {
-                    Button("삭제", role: .destructive) {
+                    Button(L10n.tr("menu.remove_confirm_delete"), role: .destructive) {
                         do {
                             try pythonEnv.removeEnvironment()
                         } catch {
                             print("[App] Failed to remove environment: \(error)")
                         }
                     }
-                    Button("취소", role: .cancel) {}
+                    Button(L10n.tr("menu.remove_confirm_cancel"), role: .cancel) {}
                 } message: {
-                    Text("경로: \(pythonEnv.supportDirPath)\n크기: \(pythonEnv.installedSizeString)\n\n삭제 후 다음 실행 시 다시 설치됩니다.")
+                    Text(L10n.tr("menu.remove_confirm_message", pythonEnv.supportDirPath, pythonEnv.installedSizeString))
                 }
             }
         }
@@ -76,7 +76,6 @@ private struct BridgeTestRunner: View {
     }
 
     private func runBridgeTest() async {
-        // Find the project root by walking up from cwd looking for silence_cutter/.
         let fm = FileManager.default
         var dir = URL(fileURLWithPath: fm.currentDirectoryPath)
         var projectRoot = dir.path
@@ -103,7 +102,6 @@ private struct BridgeTestRunner: View {
                 print("[test-bridge] ❌ unexpected result: \(result)")
             }
 
-            // Test echo
             let echoResult = try await bridge.call("echo", params: ["msg": "hello"], timeout: 10)
             print("[test-bridge] ✅ echo → \(echoResult)")
 
@@ -120,8 +118,6 @@ private struct BridgeTestRunner: View {
 
 // MARK: - Analyze Test Runner
 
-/// Headless view that runs the full analyze pipeline on a video file and exits.
-/// Usage: SilenceCutterApp --test-analyze /path/to/video.mp4
 private struct AnalyzeTestRunner: View {
     @State private var service = AnalysisService()
 
@@ -133,7 +129,6 @@ private struct AnalyzeTestRunner: View {
     }
 
     private func runAnalyzeTest() async {
-        // Find the video path argument following --test-analyze
         let args = CommandLine.arguments
         guard let flagIndex = args.firstIndex(of: "--test-analyze"),
               flagIndex + 1 < args.count else {

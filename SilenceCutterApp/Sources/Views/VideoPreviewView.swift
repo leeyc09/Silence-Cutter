@@ -55,7 +55,7 @@ struct VideoPreviewView: View {
         ZStack {
             Rectangle()
                 .fill(.black)
-            Text("영상 파일을 드래그하거나\n파일 열기 버튼을 사용하세요")
+            Text(L10n.tr("preview.placeholder"))
                 .multilineTextAlignment(.center)
                 .foregroundStyle(.white.opacity(0.5))
                 .font(.title3)

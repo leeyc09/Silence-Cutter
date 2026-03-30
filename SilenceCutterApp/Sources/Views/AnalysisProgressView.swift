@@ -20,7 +20,7 @@ struct AnalysisProgressView: View {
             } else {
                 ProgressView()
                     .controlSize(.large)
-                Text("분석 준비 중…")
+                Text(L10n.tr("progress.preparing"))
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
@@ -30,7 +30,7 @@ struct AnalysisProgressView: View {
                 Button(role: .cancel) {
                     onCancel()
                 } label: {
-                    Label("취소", systemImage: "xmark.circle")
+                    Label(L10n.tr("progress.cancel"), systemImage: "xmark.circle")
                         .font(.caption)
                 }
                 .buttonStyle(.plain)
@@ -57,7 +57,7 @@ struct AnalysisProgressView: View {
     private func combinedView(_ dlProgress: ProgressInfo) -> some View {
         VStack(spacing: 20) {
             VStack(spacing: 8) {
-                Text("분석")
+                Text(L10n.tr("progress.analysis"))
                     .font(.headline)
                 ProgressView(value: Double(lastAnalyzePercent), total: 100)
                     .progressViewStyle(.linear)
@@ -72,7 +72,7 @@ struct AnalysisProgressView: View {
                     Image(systemName: "arrow.down.circle")
                         .foregroundStyle(.cyan)
                         .symbolEffect(.pulse, options: .repeating)
-                    Text("AI 모델 다운로드")
+                    Text(L10n.tr("progress.model_download"))
                         .font(.subheadline.bold())
                         .foregroundStyle(.cyan)
                 }
@@ -121,8 +121,8 @@ struct AnalysisProgressView: View {
 
     private static func phaseDisplayName(_ phase: String) -> String {
         switch phase {
-        case "analyze": "분석"
-        case "vad": "음성 감지"
+        case "analyze": L10n.tr("progress.phase_analyze")
+        case "vad": L10n.tr("progress.phase_vad")
         default: phase
         }
     }

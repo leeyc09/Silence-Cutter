@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Pre-analysis settings dialog — shown when a video is loaded or "분석" is clicked.
+/// Pre-analysis settings dialog — shown when a video is loaded or "Analyze" is clicked.
 /// Lets the user configure language, model, VAD sensitivity, etc. before starting analysis.
 struct AnalyzeDialogView: View {
     @Bindable var settings: AnalysisSettings
@@ -14,7 +14,7 @@ struct AnalyzeDialogView: View {
                 Image(systemName: "waveform.badge.magnifyingglass")
                     .foregroundStyle(.cyan)
                     .font(.title2)
-                Text("분석 설정")
+                Text(L10n.tr("dialog.title"))
                     .font(.title3.bold())
                 Spacer()
                 Button {
@@ -37,12 +37,12 @@ struct AnalyzeDialogView: View {
                 VStack(alignment: .leading, spacing: 18) {
                     // Language & Model
                     VStack(alignment: .leading, spacing: 10) {
-                        Label("음성 인식", systemImage: "waveform")
+                        Label(L10n.tr("dialog.speech_recognition"), systemImage: "waveform")
                             .font(.subheadline.bold())
                             .foregroundStyle(.cyan)
 
                         HStack {
-                            Text("언어")
+                            Text(L10n.tr("dialog.language"))
                                 .frame(width: 70, alignment: .leading)
                             Picker("", selection: $settings.language) {
                                 ForEach(AnalysisSettings.languages, id: \.self) { lang in
@@ -54,7 +54,7 @@ struct AnalyzeDialogView: View {
                         }
 
                         HStack {
-                            Text("모델")
+                            Text(L10n.tr("dialog.model"))
                                 .frame(width: 70, alignment: .leading)
                             Picker("", selection: $settings.asrModel) {
                                 ForEach(AnalysisSettings.ASRModel.allCases) { model in
@@ -70,27 +70,27 @@ struct AnalyzeDialogView: View {
 
                     // VAD
                     VStack(alignment: .leading, spacing: 10) {
-                        Label("무음 감지", systemImage: "speaker.wave.2")
+                        Label(L10n.tr("dialog.silence_detection"), systemImage: "speaker.wave.2")
                             .font(.subheadline.bold())
                             .foregroundStyle(.cyan)
 
                         VStack(alignment: .leading, spacing: 2) {
                             HStack {
-                                Text("감도")
+                                Text(L10n.tr("dialog.sensitivity"))
                                     .frame(width: 70, alignment: .leading)
                                 Slider(value: $settings.vadThreshold, in: 0.1...0.9, step: 0.05)
                                 Text(String(format: "%.2f", settings.vadThreshold))
                                     .font(.caption.monospaced())
                                     .frame(width: 36)
                             }
-                            Text("낮을수록 민감 (작은 소리도 음성으로 인식)")
+                            Text(L10n.tr("dialog.sensitivity_hint"))
                                 .font(.caption2)
                                 .foregroundStyle(.tertiary)
                                 .padding(.leading, 74)
                         }
 
                         HStack {
-                            Text("최소 무음")
+                            Text(L10n.tr("dialog.min_silence"))
                                 .frame(width: 70, alignment: .leading)
                             TextField("", value: $settings.minSilenceMs, format: .number)
                                 .textFieldStyle(.roundedBorder)
@@ -99,7 +99,7 @@ struct AnalyzeDialogView: View {
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                             Spacer()
-                            Text("패딩")
+                            Text(L10n.tr("dialog.padding"))
                                 .frame(width: 40, alignment: .leading)
                             TextField("", value: $settings.speechPadMs, format: .number)
                                 .textFieldStyle(.roundedBorder)
@@ -114,30 +114,30 @@ struct AnalyzeDialogView: View {
 
                     // Segment & Subtitle
                     VStack(alignment: .leading, spacing: 10) {
-                        Label("자막", systemImage: "captions.bubble")
+                        Label(L10n.tr("dialog.subtitle"), systemImage: "captions.bubble")
                             .font(.subheadline.bold())
                             .foregroundStyle(.cyan)
 
                         HStack {
-                            Text("클립 최대")
+                            Text(L10n.tr("dialog.max_clip"))
                                 .frame(width: 70, alignment: .leading)
                             Slider(value: $settings.maxSegmentSeconds, in: 3...20, step: 1)
-                            Text("\(Int(settings.maxSegmentSeconds))초")
+                            Text(L10n.tr("dialog.seconds_unit", Int(settings.maxSegmentSeconds)))
                                 .font(.caption.monospaced())
                                 .frame(width: 30)
                         }
 
                         HStack {
-                            Text("줄 최대")
+                            Text(L10n.tr("dialog.max_chars"))
                                 .frame(width: 70, alignment: .leading)
                             TextField("", value: $settings.maxSubtitleChars, format: .number)
                                 .textFieldStyle(.roundedBorder)
                                 .frame(width: 60)
-                            Text("글자")
+                            Text(L10n.tr("dialog.chars_unit"))
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                             Spacer()
-                            Text("폰트")
+                            Text(L10n.tr("dialog.font"))
                                 .frame(width: 40, alignment: .leading)
                             TextField("", value: $settings.fontSizeExport, format: .number)
                                 .textFieldStyle(.roundedBorder)
@@ -155,19 +155,19 @@ struct AnalyzeDialogView: View {
 
             // Action buttons
             HStack {
-                Button("기본값") {
+                Button(L10n.tr("dialog.defaults")) {
                     settings.resetToDefaults()
                 }
                 .foregroundStyle(.secondary)
 
                 Spacer()
 
-                Button("취소") {
+                Button(L10n.tr("dialog.cancel")) {
                     isPresented = false
                 }
                 .keyboardShortcut(.escape)
 
-                Button("분석 시작") {
+                Button(L10n.tr("dialog.start")) {
                     isPresented = false
                     onStart()
                 }

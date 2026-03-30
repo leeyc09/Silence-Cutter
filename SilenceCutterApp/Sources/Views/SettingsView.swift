@@ -31,7 +31,7 @@ struct SettingsView: View {
         HStack {
             Image(systemName: "gearshape.fill")
                 .foregroundStyle(.cyan)
-            Text("분석 설정")
+            Text(L10n.tr("settings.title"))
                 .font(.title3.bold())
             Spacer()
             Button {
@@ -49,12 +49,12 @@ struct SettingsView: View {
 
     private var languageSection: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Label("음성 인식", systemImage: "waveform")
+            Label(L10n.tr("settings.speech_recognition"), systemImage: "waveform")
                 .font(.headline)
                 .foregroundStyle(.cyan)
 
             HStack {
-                Text("언어")
+                Text(L10n.tr("settings.language"))
                     .frame(width: 80, alignment: .leading)
                 Picker("", selection: $settings.language) {
                     ForEach(AnalysisSettings.languages, id: \.self) { lang in
@@ -66,7 +66,7 @@ struct SettingsView: View {
             }
 
             HStack {
-                Text("ASR 모델")
+                Text(L10n.tr("settings.asr_model"))
                     .frame(width: 80, alignment: .leading)
                 Picker("", selection: $settings.asrModel) {
                     ForEach(AnalysisSettings.ASRModel.allCases) { model in
@@ -83,26 +83,26 @@ struct SettingsView: View {
 
     private var vadSection: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Label("무음 감지 (VAD)", systemImage: "speaker.wave.2")
+            Label(L10n.tr("settings.vad"), systemImage: "speaker.wave.2")
                 .font(.headline)
                 .foregroundStyle(.cyan)
 
             VStack(alignment: .leading, spacing: 4) {
                 HStack {
-                    Text("감도")
+                    Text(L10n.tr("settings.sensitivity"))
                         .frame(width: 80, alignment: .leading)
                     Slider(value: $settings.vadThreshold, in: 0.1...0.9, step: 0.05)
                     Text(String(format: "%.2f", settings.vadThreshold))
                         .font(.caption.monospaced())
                         .frame(width: 40)
                 }
-                Text("낮을수록 민감 (작은 소리도 음성으로 인식)")
+                Text(L10n.tr("settings.sensitivity_hint"))
                     .font(.caption2)
                     .foregroundStyle(.tertiary)
             }
 
             HStack {
-                Text("최소 무음")
+                Text(L10n.tr("settings.min_silence"))
                     .frame(width: 80, alignment: .leading)
                 TextField("", value: $settings.minSilenceMs, format: .number)
                     .textFieldStyle(.roundedBorder)
@@ -114,7 +114,7 @@ struct SettingsView: View {
             }
 
             HStack {
-                Text("최소 음성")
+                Text(L10n.tr("settings.min_speech"))
                     .frame(width: 80, alignment: .leading)
                 TextField("", value: $settings.minSpeechMs, format: .number)
                     .textFieldStyle(.roundedBorder)
@@ -126,7 +126,7 @@ struct SettingsView: View {
             }
 
             HStack {
-                Text("패딩")
+                Text(L10n.tr("settings.padding"))
                     .frame(width: 80, alignment: .leading)
                 TextField("", value: $settings.speechPadMs, format: .number)
                     .textFieldStyle(.roundedBorder)
@@ -143,20 +143,20 @@ struct SettingsView: View {
 
     private var segmentSection: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Label("세그먼트 분할", systemImage: "scissors")
+            Label(L10n.tr("settings.segment"), systemImage: "scissors")
                 .font(.headline)
                 .foregroundStyle(.cyan)
 
             VStack(alignment: .leading, spacing: 4) {
                 HStack {
-                    Text("최대 길이")
+                    Text(L10n.tr("settings.max_length"))
                         .frame(width: 80, alignment: .leading)
                     Slider(value: $settings.maxSegmentSeconds, in: 3...20, step: 1)
-                    Text("\(Int(settings.maxSegmentSeconds))초")
+                    Text(L10n.tr("settings.seconds_unit", Int(settings.maxSegmentSeconds)))
                         .font(.caption.monospaced())
                         .frame(width: 35)
                 }
-                Text("클립 하나의 최대 길이 (단어 경계에서 분할)")
+                Text(L10n.tr("settings.max_length_hint"))
                     .font(.caption2)
                     .foregroundStyle(.tertiary)
             }
@@ -167,24 +167,24 @@ struct SettingsView: View {
 
     private var subtitleSection: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Label("자막", systemImage: "captions.bubble")
+            Label(L10n.tr("settings.subtitle"), systemImage: "captions.bubble")
                 .font(.headline)
                 .foregroundStyle(.cyan)
 
             HStack {
-                Text("줄 최대")
+                Text(L10n.tr("settings.max_chars"))
                     .frame(width: 80, alignment: .leading)
                 TextField("", value: $settings.maxSubtitleChars, format: .number)
                     .textFieldStyle(.roundedBorder)
                     .frame(width: 70)
-                Text("글자")
+                Text(L10n.tr("settings.chars_unit"))
                     .font(.caption)
                     .foregroundStyle(.secondary)
                 Spacer()
             }
 
             HStack {
-                Text("폰트 크기")
+                Text(L10n.tr("settings.font_size"))
                     .frame(width: 80, alignment: .leading)
                 TextField("", value: $settings.fontSizeExport, format: .number)
                     .textFieldStyle(.roundedBorder)
@@ -202,7 +202,7 @@ struct SettingsView: View {
     private var resetSection: some View {
         HStack {
             Spacer()
-            Button("기본값으로 초기화") {
+            Button(L10n.tr("settings.reset")) {
                 settings.resetToDefaults()
             }
             .foregroundStyle(.red)

@@ -1,0 +1,102 @@
+/* Korean */
+
+// MARK: - App Menu
+"menu.remove_env" = "Python 환경 삭제 (%@)…";
+"menu.remove_confirm_title" = "Python 환경을 삭제하시겠습니까?";
+"menu.remove_confirm_delete" = "삭제";
+"menu.remove_confirm_cancel" = "취소";
+"menu.remove_confirm_message" = "경로: %@\n크기: %@\n\n삭제 후 다음 실행 시 다시 설치됩니다.";
+
+// MARK: - Setup Overlay
+"setup.checking" = "환경 확인 중…";
+"setup.installing_title" = "Python 환경 설치 중";
+"setup.installing_subtitle" = "처음 실행 시에만 필요합니다";
+"setup.failed_title" = "환경 설치 실패";
+"setup.retry" = "다시 시도";
+
+// MARK: - Main Content
+"main.load_video" = "영상을 불러오세요";
+"main.transcript" = "Transcript";
+
+// MARK: - Video Preview
+"preview.placeholder" = "영상 파일을 드래그하거나\n파일 열기 버튼을 사용하세요";
+
+// MARK: - Toolbar
+"toolbar.open" = "열기";
+"toolbar.analyze" = "분석";
+"toolbar.remove_silence" = "무음 제거";
+"toolbar.find" = "찾기";
+"toolbar.export" = "내보내기";
+"toolbar.settings" = "설정";
+
+// MARK: - Analyze Dialog
+"dialog.title" = "분석 설정";
+"dialog.speech_recognition" = "음성 인식";
+"dialog.language" = "언어";
+"dialog.model" = "모델";
+"dialog.silence_detection" = "무음 감지";
+"dialog.sensitivity" = "감도";
+"dialog.sensitivity_hint" = "낮을수록 민감 (작은 소리도 음성으로 인식)";
+"dialog.min_silence" = "최소 무음";
+"dialog.padding" = "패딩";
+"dialog.subtitle" = "자막";
+"dialog.max_clip" = "클립 최대";
+"dialog.max_chars" = "줄 최대";
+"dialog.chars_unit" = "글자";
+"dialog.font" = "폰트";
+"dialog.defaults" = "기본값";
+"dialog.cancel" = "취소";
+"dialog.start" = "분석 시작";
+"dialog.seconds_unit" = "%d초";
+
+// MARK: - Analysis Progress
+"progress.preparing" = "분석 준비 중…";
+"progress.cancel" = "취소";
+"progress.analysis" = "분석";
+"progress.model_download" = "AI 모델 다운로드";
+"progress.phase_analyze" = "분석";
+"progress.phase_vad" = "음성 감지";
+
+// MARK: - Clip Card
+"clip.title" = "클립 %d";
+"clip.split" = "클립 분할";
+"clip.merge_next" = "다음 클립과 병합";
+"clip.video_edit" = "영상편집";
+"clip.subtitle_edit" = "자막수정";
+"clip.subtitle_placeholder" = "자막 텍스트";
+"clip.deleted" = "클립 %d — 삭제됨";
+"clip.restore" = "복구";
+
+// MARK: - Word Flow
+"word.split_here" = "여기서 클립 분할";
+
+// MARK: - Find & Replace
+"find.search" = "찾기";
+"find.replace" = "치환";
+"find.replace_all" = "전체 치환";
+"find.replaced_count" = "%d건 치환";
+
+// MARK: - Transcript Editor
+"transcript.no_results" = "분석 결과가 없습니다";
+"transcript.no_speech" = "음성이 감지되지 않았습니다.";
+
+// MARK: - Settings View
+"settings.title" = "분석 설정";
+"settings.speech_recognition" = "음성 인식";
+"settings.language" = "언어";
+"settings.asr_model" = "ASR 모델";
+"settings.vad" = "무음 감지 (VAD)";
+"settings.sensitivity" = "감도";
+"settings.sensitivity_hint" = "낮을수록 민감 (작은 소리도 음성으로 인식)";
+"settings.min_silence" = "최소 무음";
+"settings.min_speech" = "최소 음성";
+"settings.padding" = "패딩";
+"settings.segment" = "세그먼트 분할";
+"settings.max_length" = "최대 길이";
+"settings.max_length_hint" = "클립 하나의 최대 길이 (단어 경계에서 분할)";
+"settings.subtitle" = "자막";
+"settings.max_chars" = "줄 최대";
+"settings.chars_unit" = "글자";
+"settings.font_size" = "폰트 크기";
+"settings.reset" = "기본값으로 초기화";
+"settings.seconds_unit" = "%d초";
