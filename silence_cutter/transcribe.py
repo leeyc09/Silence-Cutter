@@ -108,25 +108,34 @@ class Transcriber:
             _total_size = 0
 
             def __init__(self, *args, **kwargs):
-                kwargs.setdefault("disable", True)
+                # Don't disable — huggingface_hub accesses self.total directly
                 super().__init__(*args, **kwargs)
 
             def update(self, n=1):
+                super().update(n)
                 if n and n > 0:
                     with _ProgressTqdm._lock:
                         _ProgressTqdm._downloaded += n
-                    downloaded = _ProgressTqdm._downloaded
-                    total = _ProgressTqdm._total_size
-                    if total > 1024 * 1024:  # 1MB 이상일 때만 (메타데이터 스킵)
-                        pct = min(int(downloaded * 100 / total), 100)
-                        mb_done = downloaded / (1024 * 1024)
-                        mb_total = total / (1024 * 1024)
-                        cb("model_download", pct, f"다운로드 중… {mb_done:.0f} / {mb_total:.0f} MB")
+                    self._report_progress()
 
             def refresh(self, *args, **kwargs):
-                # total이 증가하면 _total_size를 갱신
+                # huggingface_hub calls bytes_progress.total += file_size then refresh()
                 if self.total and self.total > _ProgressTqdm._total_size:
                     _ProgressTqdm._total_size = self.total
+                self._report_progress()
+
+            def _report_progress(self):
+                downloaded = _ProgressTqdm._downloaded
+                total = _ProgressTqdm._total_size
+                if total > 1024 * 1024:  # 1MB 이상일 때만 (메타데이터 스킵)
+                    pct = min(int(downloaded * 100 / total), 100)
+                    mb_done = downloaded / (1024 * 1024)
+                    mb_total = total / (1024 * 1024)
+                    cb("model_download", pct, f"Downloading… {mb_done:.0f} / {mb_total:.0f} MB")
+
+            def display(self, *args, **kwargs):
+                # Suppress tqdm visual output
+                pass
 
             def close(self):
                 pass
