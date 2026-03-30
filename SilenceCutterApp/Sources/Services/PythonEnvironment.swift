@@ -34,16 +34,17 @@ final class PythonEnvironment {
     // MARK: - Constants
 
     /// Version stamp — bump this when dependencies change to force reinstall.
-    private static let envVersion = "1"
+    private static let envVersion = "2"
 
     /// pip packages required for the server mode.
-    /// Deliberately excludes gradio, soynlp, librosa (unused by server.py).
+    /// Deliberately excludes gradio, librosa (unused by server.py).
     private static let serverDependencies: [String] = [
         "numpy<2",
         "soundfile>=0.12.0",
         "torch>=2.0.0",
         "silero-vad>=5.1.2",
         "mlx-audio>=0.3.0",
+        "soynlp",
     ]
 
     // MARK: - Paths
