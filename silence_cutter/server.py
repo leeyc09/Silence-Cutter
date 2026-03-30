@@ -645,8 +645,8 @@ def handle_resub(params: dict) -> dict:
     out_segments = []
     for seg in raw_segments:
         out_segments.append({
-            "start": seg.seg_start,
-            "end": seg.seg_end,
+            "seg_start": seg.seg_start,
+            "seg_end": seg.seg_end,
             "text": seg.text,
             "words": [
                 {"text": w.text, "start": w.start, "end": w.end}
