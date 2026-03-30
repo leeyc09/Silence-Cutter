@@ -197,6 +197,17 @@ final class PythonBridge {
         proc.executableURL = URL(fileURLWithPath: pythonPath)
         proc.arguments = ["-m", "silence_cutter.server"]
         proc.currentDirectoryURL = URL(fileURLWithPath: projectRoot)
+
+        // Ensure Homebrew / common tool paths are available.
+        // macOS .app bundles inherit a minimal PATH that excludes /opt/homebrew/bin,
+        // causing ffprobe/ffmpeg lookups to fail.
+        var env = ProcessInfo.processInfo.environment
+        let extraPaths = ["/opt/homebrew/bin", "/usr/local/bin", "/opt/homebrew/sbin"]
+        let currentPath = env["PATH"] ?? "/usr/bin:/bin:/usr/sbin:/sbin"
+        let combined = (extraPaths + [currentPath]).joined(separator: ":")
+        env["PATH"] = combined
+        proc.environment = env
+
         proc.standardInput = stdin
         proc.standardOutput = stdout
         proc.standardError = stderr
