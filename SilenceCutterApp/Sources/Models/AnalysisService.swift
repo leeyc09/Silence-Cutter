@@ -46,7 +46,9 @@ final class AnalysisService {
     ///   - videoURL: Local file URL of the video to analyze.
     ///   - environment: A ready PythonEnvironment that provides paths.
     ///                  If nil, falls back to legacy cwd walk-up discovery.
-    func analyze(videoURL: URL, environment: PythonEnvironment? = nil) async {
+    ///   - settings: Analysis settings (language, VAD params, etc.).
+    ///               If nil, uses defaults.
+    func analyze(videoURL: URL, environment: PythonEnvironment? = nil, settings: AnalysisSettings? = nil) async {
         guard !isAnalyzing else { return }
         isAnalyzing = true
         error = nil
@@ -84,10 +86,14 @@ final class AnalysisService {
                 "analyze",
                 params: [
                     "video_path": .string(videoURL.path),
-                    "language": .string("Korean"),
-                    "min_silence_ms": .int(200),
-                    "speech_pad_ms": .int(100),
-                    "max_segment_seconds": .double(8.0),
+                    "language": .string(settings?.language ?? "Korean"),
+                    "asr_model": .string(settings?.asrModel.rawValue ?? "mlx-community/Qwen3-ASR-0.6B-8bit"),
+                    "threshold": .double(settings?.vadThreshold ?? 0.5),
+                    "min_speech_ms": .int(settings?.minSpeechMs ?? 250),
+                    "min_silence_ms": .int(settings?.minSilenceMs ?? 200),
+                    "speech_pad_ms": .int(settings?.speechPadMs ?? 100),
+                    "max_segment_seconds": .double(settings?.maxSegmentSeconds ?? 8.0),
+                    "max_subtitle_chars": .int(settings?.maxSubtitleChars ?? 20),
                 ],
                 timeout: 600,  // 10 min — long videos can take time
                 as: AnalyzeResponse.self

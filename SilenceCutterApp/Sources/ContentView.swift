@@ -6,9 +6,11 @@ struct ContentView: View {
     @State private var bridge = PythonBridge()
     @State private var videoModel = VideoPlayerModel()
     @State private var analysisService = AnalysisService()
+    @State private var settings = AnalysisSettings()
     @State private var bridgeStatus: String = ""
     @State private var isTesting = false
     @State private var showFindReplace = false
+    @State private var showSettings = false
 
     var body: some View {
         ZStack {
@@ -176,7 +178,8 @@ struct ContentView: View {
                     Button {
                         Task {
                             guard let url = videoModel.videoURL else { return }
-                            await analysisService.analyze(videoURL: url, environment: pythonEnv)
+                            settings.save()
+                            await analysisService.analyze(videoURL: url, environment: pythonEnv, settings: settings)
                         }
                     } label: {
                         Label("분석", systemImage: "waveform.badge.magnifyingglass")
@@ -209,6 +212,12 @@ struct ContentView: View {
                         Label("내보내기", systemImage: "square.and.arrow.up")
                     }
                     .disabled(analysisService.segments.isEmpty)
+
+                    Button {
+                        showSettings.toggle()
+                    } label: {
+                        Label("설정", systemImage: "gearshape")
+                    }
                 }
                 .padding(8)
             }
@@ -220,6 +229,12 @@ struct ContentView: View {
             }
             .keyboardShortcut("f", modifiers: .command)
             .hidden()
+        }
+        .sheet(isPresented: $showSettings) {
+            SettingsView(settings: settings, isPresented: $showSettings)
+        }
+        .onAppear {
+            settings.load()
         }
     }
 
@@ -267,7 +282,9 @@ struct ContentView: View {
                 content = ExportService.generateFCPXML(
                     segments: analysisService.segments,
                     videoInfo: info,
-                    videoURL: videoModel.videoURL ?? URL(fileURLWithPath: "/unknown")
+                    videoURL: videoModel.videoURL ?? URL(fileURLWithPath: "/unknown"),
+                    fontSize: settings.fontSizeExport,
+                    maxSubtitleChars: settings.maxSubtitleChars
                 )
             case .itt:
                 content = ExportService.generateITT(segments: analysisService.segments, fps: analysisService.videoInfo?.fps ?? 24.0)

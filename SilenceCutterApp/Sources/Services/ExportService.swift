@@ -106,7 +106,7 @@ struct ExportService {
     // MARK: - FCPXML
 
     /// Generates FCPXML v1.13 from kept segments, matching Python fcpxml.py output.
-    static func generateFCPXML(segments: [Segment], videoInfo: VideoInfo, videoURL: URL) -> String {
+    static func generateFCPXML(segments: [Segment], videoInfo: VideoInfo, videoURL: URL, fontSize: Int = 42, maxSubtitleChars: Int = 20) -> String {
         let kept = segments.filter(\.isKept)
         let fps = videoInfo.fps
         let (frameNum, frameDen, fpsCode) = getFrameInfo(fps: fps)
@@ -167,7 +167,7 @@ struct ExportService {
 
             // Build subtitle titles inside asset-clip
             let subtitleText = seg.exportText
-            let subtitleChunks = splitSubtitle(subtitleText, maxChars: 20)
+            let subtitleChunks = splitSubtitle(subtitleText, maxChars: maxSubtitleChars)
 
             if subtitleChunks.isEmpty || subtitleText.isEmpty {
                 // No subtitle — self-closing asset-clip
@@ -233,7 +233,7 @@ struct ExportService {
                     duration="\(rationalStr(chunkDur))">
                                   <text><text-style ref="\(tsId)">\(escapedChunk)</text-style></text>
                                   <text-style-def id="\(tsId)">
-                                    <text-style font="Helvetica" fontSize="42" fontColor="1 1 1 1" bold="1" shadowColor="0 0 0 0.75" shadowOffset="3 315" alignment="center"/>
+                                    <text-style font="Helvetica" fontSize="\(fontSize)" fontColor="1 1 1 1" bold="1" shadowColor="0 0 0 0.75" shadowOffset="3 315" alignment="center"/>
                                   </text-style-def>
                                 </title>\n
                     """
