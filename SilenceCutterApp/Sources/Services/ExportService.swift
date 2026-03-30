@@ -381,6 +381,7 @@ struct ExportService {
                 shouldBreak = true
             } else if currentText.count >= maxChars {
                 // Check if next word is short (≤3 chars) — include it to avoid orphan
+                // But enforce hard limit at maxChars + 8 to prevent runaway accumulation
                 let nextWord = words[i + 1].text
                 if nextWord.count <= 3 && currentText.count < maxChars + 8 {
                     // Don't break yet — include the short next word
