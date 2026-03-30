@@ -8,7 +8,7 @@ struct AnalysisProgressView: View {
     var body: some View {
         VStack(spacing: 12) {
             if let progress {
-                Text(progress.phase)
+                Text(Self.phaseDisplayName(progress.phase))
                     .font(.headline)
 
                 ProgressView(value: Double(progress.percent), total: 100)
@@ -35,6 +35,16 @@ struct AnalysisProgressView: View {
         }
         .padding()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    /// Map Python phase names to user-facing Korean labels.
+    private static func phaseDisplayName(_ phase: String) -> String {
+        switch phase {
+        case "model_download": "모델 다운로드"
+        case "analyze": "분석"
+        case "vad": "음성 감지"
+        default: phase
+        }
     }
 }
 

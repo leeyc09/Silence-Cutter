@@ -215,6 +215,7 @@ def handle_analyze(params: dict) -> dict:
         asr_model=params.get("asr_model", "mlx-community/Qwen3-ASR-0.6B-8bit"),
         aligner_model=params.get("aligner_model", "mlx-community/Qwen3-ForcedAligner-0.6B-8bit"),
         language=params.get("language", "Korean"),
+        on_progress=lambda phase, pct, detail: _progress(phase, pct, detail),
     )
 
     results = []

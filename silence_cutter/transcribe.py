@@ -2,12 +2,19 @@
 
 from __future__ import annotations
 
+import contextlib
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import List
 
 import numpy as np
 import soundfile as sf
+
+
+@contextlib.contextmanager
+def _noop_ctx():
+    """No-op context manager — used when no progress callback is provided."""
+    yield
 
 
 @dataclass
@@ -52,20 +59,91 @@ class Transcriber:
         asr_model: str = "mlx-community/Qwen3-ASR-0.6B-8bit",
         aligner_model: str = "mlx-community/Qwen3-ForcedAligner-0.6B-8bit",
         language: str = "Korean",
+        on_progress=None,
     ):
         self.language = language
         self._asr_model_id = asr_model
         self._aligner_model_id = aligner_model
         self._asr = None
         self._aligner = None
+        self._on_progress = on_progress
 
     def _ensure_loaded(self):
         if self._asr is None:
             from mlx_audio.stt import load
-            print(f"[transcribe] ASR 모델 로딩: {self._asr_model_id}")
-            self._asr = load(self._asr_model_id)
-            print(f"[transcribe] ForcedAligner 로딩: {self._aligner_model_id}")
-            self._aligner = load(self._aligner_model_id)
+
+            patch_factory = self._patch_tqdm() if self._on_progress else None
+
+            if self._on_progress:
+                self._on_progress("model_download", 0, f"ASR 모델 준비 중: {self._asr_model_id}")
+            print(f"[transcribe] ASR 모델 로딩: {self._asr_model_id}", file=__import__('sys').stderr)
+            with (patch_factory() if patch_factory else _noop_ctx()):
+                self._asr = load(self._asr_model_id)
+
+            if self._on_progress:
+                self._on_progress("model_download", 50, f"Aligner 모델 준비 중: {self._aligner_model_id}")
+            print(f"[transcribe] ForcedAligner 로딩: {self._aligner_model_id}", file=__import__('sys').stderr)
+            with (patch_factory() if patch_factory else _noop_ctx()):
+                self._aligner = load(self._aligner_model_id)
+
+            if self._on_progress:
+                self._on_progress("model_download", 100, "모델 로딩 완료")
+
+    def _patch_tqdm(self):
+        """huggingface_hub.snapshot_download에 커스텀 tqdm_class를 monkey-patch.
+
+        tqdm을 상속하되, 자체적으로 downloaded 바이트를 추적하여
+        on_progress 콜백으로 바이트 단위 진행률을 전달한다.
+        """
+        import contextlib
+        import threading
+        cb = self._on_progress
+
+        from tqdm.auto import tqdm as base_tqdm
+
+        class _ProgressTqdm(base_tqdm):
+            """tqdm subclass that forwards download progress via callback."""
+            _lock = threading.Lock()
+            _downloaded = 0
+            _total_size = 0
+
+            def __init__(self, *args, **kwargs):
+                kwargs.setdefault("disable", True)
+                super().__init__(*args, **kwargs)
+
+            def update(self, n=1):
+                if n and n > 0:
+                    with _ProgressTqdm._lock:
+                        _ProgressTqdm._downloaded += n
+                    downloaded = _ProgressTqdm._downloaded
+                    total = _ProgressTqdm._total_size
+                    if total > 1024 * 1024:  # 1MB 이상일 때만 (메타데이터 스킵)
+                        pct = min(int(downloaded * 100 / total), 100)
+                        mb_done = downloaded / (1024 * 1024)
+                        mb_total = total / (1024 * 1024)
+                        cb("model_download", pct, f"다운로드 중… {mb_done:.0f} / {mb_total:.0f} MB")
+
+            def refresh(self, *args, **kwargs):
+                # total이 증가하면 _total_size를 갱신
+                if self.total and self.total > _ProgressTqdm._total_size:
+                    _ProgressTqdm._total_size = self.total
+
+            def close(self):
+                pass
+
+        @contextlib.contextmanager
+        def _patch():
+            import huggingface_hub._snapshot_download as _sd
+            original = _sd.hf_tqdm
+            _ProgressTqdm._downloaded = 0
+            _ProgressTqdm._total_size = 0
+            _sd.hf_tqdm = _ProgressTqdm
+            try:
+                yield
+            finally:
+                _sd.hf_tqdm = original
+
+        return _patch
 
     def transcribe_segment(
         self,
