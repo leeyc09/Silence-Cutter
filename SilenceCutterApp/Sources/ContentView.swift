@@ -11,6 +11,7 @@ struct ContentView: View {
     @State private var isTesting = false
     @State private var showFindReplace = false
     @State private var showSettings = false
+    @State private var showAnalyzeDialog = false
 
     var body: some View {
         ZStack {
@@ -100,7 +101,9 @@ struct ContentView: View {
                 Divider()
 
                 if analysisService.isAnalyzing {
-                    AnalysisProgressView(progress: analysisService.progress)
+                    AnalysisProgressView(progress: analysisService.progress, onCancel: {
+                        analysisService.cancelAnalysis()
+                    })
                 } else if !analysisService.segments.isEmpty {
                     TranscriptEditorView(analysisService: analysisService, onSeek: { videoModel.seek(to: $0) }, currentTime: videoModel.currentTime)
                 } else {
@@ -169,6 +172,7 @@ struct ContentView: View {
                         panel.begin { response in
                             if response == .OK, let url = panel.url {
                                 videoModel.loadVideo(url: url)
+                                showAnalyzeDialog = true
                             }
                         }
                     } label: {
@@ -176,11 +180,7 @@ struct ContentView: View {
                     }
 
                     Button {
-                        Task {
-                            guard let url = videoModel.videoURL else { return }
-                            settings.save()
-                            await analysisService.analyze(videoURL: url, environment: pythonEnv, settings: settings)
-                        }
+                        showAnalyzeDialog = true
                     } label: {
                         Label("분석", systemImage: "waveform.badge.magnifyingglass")
                     }
@@ -232,6 +232,13 @@ struct ContentView: View {
         }
         .sheet(isPresented: $showSettings) {
             SettingsView(settings: settings, isPresented: $showSettings)
+        }
+        .sheet(isPresented: $showAnalyzeDialog) {
+            AnalyzeDialogView(settings: settings, isPresented: $showAnalyzeDialog) {
+                guard let url = videoModel.videoURL else { return }
+                settings.save()
+                analysisService.startAnalysis(videoURL: url, environment: pythonEnv, settings: settings)
+            }
         }
         .onAppear {
             settings.load()

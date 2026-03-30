@@ -38,6 +38,10 @@ final class AnalysisService {
     @ObservationIgnored
     private var bridge: PythonBridge?
 
+    /// The async analysis task — kept so it can be cancelled.
+    @ObservationIgnored
+    private var analysisTask: Task<Void, Never>?
+
     // MARK: - Analysis
 
     /// Run the full VAD+ASR analysis pipeline on a video file.
@@ -107,13 +111,38 @@ final class AnalysisService {
             newBridge.stop()
         } catch {
             let msg = String(describing: error)
-            self.error = msg
-            print("[AnalysisService] ❌ Analysis failed: \(msg)")
+            if Task.isCancelled {
+                self.error = nil  // 사용자가 취소한 경우 에러 표시 안 함
+                print("[AnalysisService] ⛔ Analysis cancelled")
+            } else {
+                self.error = msg
+                print("[AnalysisService] ❌ Analysis failed: \(msg)")
+            }
             newBridge.stop()
         }
 
         bridge = nil
         isAnalyzing = false
+        analysisTask = nil
+    }
+
+    /// Cancel the currently running analysis.
+    func cancelAnalysis() {
+        guard isAnalyzing else { return }
+        analysisTask?.cancel()
+        bridge?.stop()
+        bridge = nil
+        isAnalyzing = false
+        analysisTask = nil
+        error = nil
+        print("[AnalysisService] ⛔ Analysis cancelled by user")
+    }
+
+    /// Start analysis in a tracked Task (enables cancellation).
+    func startAnalysis(videoURL: URL, environment: PythonEnvironment? = nil, settings: AnalysisSettings? = nil) {
+        analysisTask = Task {
+            await analyze(videoURL: videoURL, environment: environment, settings: settings)
+        }
     }
 
     // MARK: - Segment editing
