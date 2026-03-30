@@ -100,9 +100,40 @@ PLIST
 echo ""
 echo "=== ✅ Build complete ==="
 echo "App bundle: $APP_BUNDLE"
+du -sh "$APP_BUNDLE"
+
+# 6. Create DMG installer
+if command -v create-dmg &>/dev/null; then
+    echo ""
+    echo "[6/6] Creating DMG installer…"
+    DMG_PATH="$DIST_DIR/Silenci-v0.2.0-macOS.dmg"
+    rm -f "$DMG_PATH"
+
+    create-dmg \
+        --volname "Silenci" \
+        --volicon "$SWIFT_PKG/Sources/Resources/AppIcon.icns" \
+        --window-pos 200 120 \
+        --window-size 660 400 \
+        --icon-size 128 \
+        --icon "SilenciApp.app" 180 200 \
+        --app-drop-link 480 200 \
+        --hide-extension "SilenciApp.app" \
+        --no-internet-enable \
+        "$DMG_PATH" \
+        "$APP_BUNDLE" \
+        2>&1 | tail -5
+
+    if [ -f "$DMG_PATH" ]; then
+        echo "  ✅ DMG: $DMG_PATH"
+        du -sh "$DMG_PATH"
+    else
+        echo "  ⚠️ DMG creation failed — app bundle is still available"
+    fi
+else
+    echo ""
+    echo "ℹ️  Install create-dmg for DMG packaging: brew install create-dmg"
+fi
+
 echo ""
 echo "To run:"
 echo "  open $APP_BUNDLE"
-echo ""
-echo "To distribute: zip the .app or create a DMG."
-du -sh "$APP_BUNDLE"
