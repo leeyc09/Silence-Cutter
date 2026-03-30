@@ -1,0 +1,79 @@
+{
+  "version": "1.0.0",
+  "lastScanned": 1774461170355,
+  "projectRoot": "/Users/youngchanlee/test/tts/Qwen3-TTS-Mac-GeneLab",
+  "techStack": {
+    "languages": [
+      {
+        "name": "Python",
+        "version": null,
+        "confidence": "high",
+        "markers": [
+          "pyproject.toml"
+        ]
+      }
+    ],
+    "frameworks": [
+      {
+        "name": "pytest",
+        "version": null,
+        "category": "testing"
+      }
+    ],
+    "packageManager": null,
+    "runtime": null
+  },
+  "build": {
+    "buildCommand": null,
+    "testCommand": "pytest",
+    "lintCommand": "ruff check",
+    "devCommand": null,
+    "scripts": {}
+  },
+  "conventions": {
+    "namingStyle": null,
+    "importStyle": null,
+    "testPattern": null,
+    "fileOrganization": null
+  },
+  "structure": {
+    "isMonorepo": false,
+    "workspaces": [],
+    "mainDirectories": [],
+    "gitBranches": {
+      "defaultBranch": "main",
+      "branchingStrategy": null
+    }
+  },
+  "customNotes": [],
+  "directoryMap": {
+    "silence_cutter": {
+      "path": "silence_cutter",
+      "purpose": null,
+      "fileCount": 12,
+      "lastAccessed": 1774461170344,
+      "keyFiles": [
+        "__init__.py",
+        "__main__.py",
+        "app.py",
+        "extract.py",
+        "fcpxml.py"
+      ]
+    },
+    "silence_cutter.egg-info": {
+      "path": "silence_cutter.egg-info",
+      "purpose": null,
+      "fileCount": 6,
+      "lastAccessed": 1774461170344,
+      "keyFiles": [
+        "PKG-INFO",
+        "SOURCES.txt",
+        "dependency_links.txt",
+        "entry_points.txt",
+        "requires.txt"
+      ]
+    }
+  },
+  "hotPaths": [],
+  "userDirectives": []
+}

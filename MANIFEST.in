@@ -1,0 +1,8 @@
+global-exclude *
+
+recursive-include silence_cutter *.py
+
+include LICENSE
+include MANIFEST.in
+include pyproject.toml
+include README.md

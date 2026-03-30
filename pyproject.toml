@@ -1,0 +1,57 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "silence-cutter"
+version = "0.1.0"
+description = "Video silence cutting and subtitle export tool for Final Cut Pro"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "Apache-2.0" }
+authors = [
+  { name = "GeneLab Contributors" },
+]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Operating System :: MacOS :: MacOS X",
+  "Topic :: Multimedia :: Video",
+]
+dependencies = [
+  "gradio>=4.0.0",
+  "librosa>=0.10.0",
+  "mlx-audio>=0.3.0",
+  "numpy<2",
+  "silero-vad>=5.1.2",
+  "soynlp",
+  "soundfile>=0.12.0",
+  "torch>=2.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=7.0.0",
+  "black>=23.0.0",
+  "ruff>=0.1.0",
+]
+
+[project.scripts]
+silence-cutter = "silence_cutter.__main__:main"
+silence-cutter-web = "silence_cutter.app:main"
+
+[tool.setuptools]
+packages = { find = { where = ["."] , include = ["silence_cutter*"] } }
+include-package-data = true
+
+[tool.black]
+line-length = 100
+target-version = ["py311"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+select = ["E", "F", "W", "I", "UP"]
+ignore = ["E501"]
