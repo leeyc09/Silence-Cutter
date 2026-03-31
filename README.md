@@ -68,15 +68,34 @@ No mid-word cuts. Ever.
 ### ✂️ Word-Level Subtitle Splitting
 - Split at sentence endings & punctuation
 - Timestamps synced to exact word boundaries
-- FCPXML inline titles, SRT, iTT formats
+- FCPXML inline titles + iTT captions, SRT formats
 - Customizable font size & max characters per line
 
 </td>
 <td>
 
+### 🔄 FCPXML Retranscribe
+- Import edited FCPXML from Final Cut Pro
+- Re-transcribe subtitles with updated clip structure
+- Handles reordered & overlapping clips correctly
+- Language & model selection per retranscribe run
+
+</td>
+</tr>
+<tr>
+<td>
+
 ### 📱 Two Interfaces
 - **macOS native app** — drag & drop, real-time preview
 - **CLI** — scriptable, automation-friendly
+
+</td>
+<td>
+
+### 🌐 Localization
+- App UI: Korean · English · Japanese · Chinese
+- In-app language selector (independent of system locale)
+- Speech recognition for 4+ languages
 
 </td>
 </tr>
@@ -208,7 +227,9 @@ Native SwiftUI app — load a video, configure settings, analyze, edit, and expo
 | ⛔ **Cancel analysis** | Stop anytime with cancel button |
 | ✂️ **Word-level editing** | Delete/restore words, split/merge clips |
 | 🔍 **Find & Replace** | Cmd+F to batch-edit subtitle text |
-| 📤 **Export** | FCPXML, SRT, iTT — all word-boundary split |
+| 🔄 **Import FCPXML** | Re-transcribe edited FCPXML with language & model selection |
+| 🌐 **App Language** | Switch UI language in Settings (Korean/English/Japanese/Chinese) |
+| 📤 **Export** | FCPXML (with inline iTT captions), SRT, iTT — all word-boundary split |
 
 ### Analysis Settings
 
@@ -331,12 +352,13 @@ silence-cutter extract timeline.fcpxml -t -o script.txt
 
 | Format | Extension | Use Case | Subtitle Splitting |
 |:------:|:---------:|:---------|:------------------:|
-| **FCPXML** | `.fcpxml` | Final Cut Pro (silence cuts + inline subtitles) | ✅ Word-based |
+| **FCPXML** | `.fcpxml` | Final Cut Pro (silence cuts + inline titles + iTT captions) | ✅ Word-based |
 | **SRT** | `.srt` | Universal subtitles (YouTube, VLC, etc.) | ✅ Word-based |
 | **iTT** | `.itt` | iTunes Timed Text (FCP compatible) | ✅ Word-based |
 | **TXT** | `.txt` | Plain text script (optional timecodes) | — |
 
 > All subtitle formats use **word-level timestamps for precise splitting**.
+> FCPXML exports include both **title text overlays** (lane 1) and **iTT inline captions** (lane 2) — FCP shows both automatically.
 
 ### Import to Final Cut Pro
 
@@ -546,7 +568,8 @@ Silenci/
 │           ├── AnalysisProgressView.swift # Progress + model download + cancel
 │           ├── ClipCardView.swift        # Clip card (video edit + subtitle)
 │           ├── WordFlowView.swift        # Word-level editing UI
-│           └── SettingsView.swift        # Settings sheet
+│           ├── RetranscribeSheetView.swift # FCPXML retranscribe settings + progress
+│           └── SettingsView.swift        # Settings sheet (incl. app language)
 ├── build-release.sh                 # Release build → dist/SilenciApp.app
 ├── setup_mac.sh                     # Auto Python environment setup
 └── docs/                            # Diagrams & screenshots
