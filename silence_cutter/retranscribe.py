@@ -6,7 +6,7 @@ import xml.etree.ElementTree as ET
 from copy import deepcopy
 from fractions import Fraction
 from pathlib import Path
-from typing import Optional
+from typing import Callable, Optional
 from urllib.parse import unquote, urlparse
 
 from .transcribe import Transcriber, TranscribedSegment
@@ -51,6 +51,7 @@ def retranscribe(
     max_subtitle_chars: int = 20,
     export_itt: bool = False,
     language_code: str = "ko",
+    on_progress: Optional[Callable[[str], None]] = None,
 ) -> Path:
     """
     편집된 FCPXML/FCPXMLD를 읽어서 자막을 재생성.
@@ -58,6 +59,12 @@ def retranscribe(
     기존 타이틀을 제거하고, 각 asset-clip의 시간 범위로 ASR을 다시 실행하여
     새 자막을 생성합니다.
     """
+    def _log(msg: str) -> None:
+        if on_progress:
+            on_progress(msg)
+        else:
+            print(msg)
+
     fcpxml_path = Path(fcpxml_path)
 
     # .fcpxmld 번들이면 내부 Info.fcpxml 사용
@@ -74,7 +81,7 @@ def retranscribe(
     output_path = Path(output_path)
 
     # 1. FCPXML 파싱
-    print(f"[retranscribe] FCPXML 읽기: {xml_path}")
+    _log(f"[retranscribe] FCPXML 읽기: {xml_path}")
     tree = ET.parse(str(xml_path))
     root = tree.getroot()
 
@@ -82,10 +89,10 @@ def retranscribe(
     video_path = _find_source_video(tree)
     if video_path is None:
         raise FileNotFoundError("FCPXML에서 원본 영상 경로를 찾을 수 없습니다.")
-    print(f"[retranscribe] 원본 영상: {video_path}")
+    _log(f"[retranscribe] 원본 영상: {video_path}")
 
     # 3. 오디오 추출
-    print("[retranscribe] 오디오 추출 중...")
+    _log("[retranscribe] 오디오 추출 중...")
     audio_path = extract_audio(video_path)
 
     # 4. spine에서 asset-clip 목록 추출 + 기존 title 제거
@@ -136,15 +143,30 @@ def retranscribe(
 
     # 6. 각 asset-clip 처리
     clips = list(spine.findall("asset-clip"))
-    print(f"[retranscribe] 클립 {len(clips)}개 발견")
+    _log(f"[retranscribe] 클립 {len(clips)}개 발견")
 
     ts_counter = 0
     all_transcribed_timeline = []  # iTT용 (타임라인 기준 시간)
 
+    # 기존 caption의 role 속성 보존 (새 caption 생성 시 동일 role 사용)
+    caption_role = None
+    for clip in clips:
+        for cap in clip.findall("caption"):
+            r = cap.get("role")
+            if r:
+                caption_role = r
+                break
+        if caption_role:
+            break
+    if caption_role is None:
+        caption_role = f"iTT?captionFormat=ITT.{language_code}"
+
     for clip_idx, clip in enumerate(clips):
-        # 기존 title 제거
+        # 기존 title과 caption 제거
         for title in list(clip.findall("title")):
             clip.remove(title)
+        for caption in list(clip.findall("caption")):
+            clip.remove(caption)
 
         # 클립 시간 정보
         timeline_offset = _parse_time(clip.get("offset", "0s"))
@@ -152,7 +174,7 @@ def retranscribe(
         clip_dur = _parse_time(clip.get("duration", "0s"))
         src_end = src_start + clip_dur
 
-        print(f"[retranscribe] ({clip_idx + 1}/{len(clips)}) {src_start:.1f}s ~ {src_end:.1f}s")
+        _log(f"[retranscribe] ({clip_idx + 1}/{len(clips)}) {src_start:.1f}s ~ {src_end:.1f}s")
 
         # ASR 실행
         result = transcriber.transcribe_segment(audio_path, src_start, src_end)
@@ -227,6 +249,28 @@ def retranscribe(
                 "alignment": "center",
             })
 
+            # caption 생성 (FCPXML 인라인 캡션 — FCP 타임라인에서 별도 자막 트랙으로 표시)
+            cap_ts_id = f"rcts{ts_counter}"
+            caption_el = ET.SubElement(clip, "caption", {
+                "lane": "2",
+                "offset": _rational_str(chunk_start),
+                "name": chunk["text"][:50],
+                "start": "3600s",
+                "duration": _rational_str(chunk_dur),
+                "role": caption_role,
+            })
+            cap_text_el = ET.SubElement(caption_el, "text", placement="bottom")
+            cap_ts = ET.SubElement(cap_text_el, "text-style", ref=cap_ts_id)
+            cap_ts.text = chunk["text"]
+            cap_ts_def = ET.SubElement(caption_el, "text-style-def", id=cap_ts_id)
+            ET.SubElement(cap_ts_def, "text-style", {
+                "font": ".AppleSystemUIFont",
+                "fontSize": "13",
+                "fontFace": "Regular",
+                "fontColor": "1 1 1 1",
+                "backgroundColor": "0 0 0 1",
+            })
+
     # 7. 저장
     ET.indent(tree, space="    ")
     with open(output_path, "wb") as f:
@@ -234,19 +278,19 @@ def retranscribe(
         f.write(b'<!DOCTYPE fcpxml>\n')
         tree.write(f, encoding="UTF-8", xml_declaration=False)
 
-    print(f"[retranscribe] 완료! → {output_path}")
+    _log(f"[retranscribe] 완료! → {output_path}")
 
     # iTT 생성
     if export_itt and all_transcribed_timeline:
         itt_path = output_path.with_suffix(".itt")
-        print("[retranscribe] iTT 자막 생성 중...")
+        _log("[retranscribe] iTT 자막 생성 중...")
         generate_itt(
             segments=all_transcribed_timeline,
             output_path=itt_path,
             language=language_code,
             max_subtitle_chars=max_subtitle_chars,
         )
-        print(f"[retranscribe] iTT → {itt_path}")
+        _log(f"[retranscribe] iTT → {itt_path}")
 
     # 임시 오디오 정리
     try:

@@ -614,14 +614,13 @@ def handle_resub(params: dict) -> dict:
         on_progress=lambda phase, pct, detail: _progress(phase, pct, detail),
     )
 
-    # Process each clip → produce per-clip segments with timeline times
+    # Process each clip → produce per-clip segments with timeline times.
     # FCP clips may overlap in source time (user extended a clip) or be reordered.
-    # We ASR each clip independently and remap to timeline offsets.
+    # We ASR each clip independently and keep both source time (for video preview)
+    # and timeline time (for the timeline bar display).
     #
-    # For resub, segments use SOURCE time (not timeline time) because the
-    # video preview plays the original source video. The timeline offset
-    # is only used for subtitle export order.
-    all_clip_segments = []
+    # Each entry: (TranscribedSegment, clip_dict) so we can compute timeline coords later.
+    all_clip_results: list[tuple] = []  # (segment, clip)
     total = len(clips)
     for i, clip in enumerate(clips):
         pct = 20 + int(60 * (i / total))
@@ -648,9 +647,10 @@ def handle_resub(params: dict) -> dict:
                 ))
             if clip_words:
                 clip_segments = _split_words_into_segments(clip_words, max_seg_sec)
-                all_clip_segments.extend(clip_segments)
+                for seg in clip_segments:
+                    all_clip_results.append((seg, clip))
         elif result.text:
-            all_clip_segments.append(TranscribedSegment(
+            seg = TranscribedSegment(
                 seg_start=clip["src_start"],
                 seg_end=clip["src_end"],
                 text=result.text,
@@ -659,9 +659,10 @@ def handle_resub(params: dict) -> dict:
                     start=clip["src_start"],
                     end=clip["src_end"],
                 )],
-            ))
+            )
+            all_clip_results.append((seg, clip))
 
-    if not all_clip_segments:
+    if not all_clip_results:
         try:
             from pathlib import Path as _P
             _P(audio_path).unlink()
@@ -673,16 +674,35 @@ def handle_resub(params: dict) -> dict:
             "video_info": {"fps": fps, "width": width, "height": height, "duration": duration},
         }
 
+    # Separate segments for josa merge (need to preserve clip pairing)
+    all_clip_segments = [pair[0] for pair in all_clip_results]
+    clip_for_segment = [pair[1] for pair in all_clip_results]
+
     # Orphan josa merge (Korean)
     _progress("analyze", 85, "Post-processing…")
     lang = params.get("language", "Korean")
     if lang.lower() in ("korean", "ko"):
         all_clip_segments = merge_orphan_josa(all_clip_segments)
 
-    # 6. Build response (segments are already in timeline order)
+    # 6. Build response — include timeline coordinates alongside source coordinates.
+    # Source time (seg_start/seg_end) is used for video preview seek.
+    # Timeline time (timeline_start/timeline_end) is used for timeline bar display.
     _progress("analyze", 95, "Building response…")
+
+    # Compute total timeline duration for the sequence
+    tl_duration = 0.0
+    for c in clips:
+        c_end = c["timeline_offset"] + c["duration"]
+        if c_end > tl_duration:
+            tl_duration = c_end
+
     out_segments = []
-    for seg in all_clip_segments:
+    for idx, seg in enumerate(all_clip_segments):
+        clip = clip_for_segment[idx] if idx < len(clip_for_segment) else clips[-1]
+        # Map source time → timeline time:
+        # timeline_pos = clip.timeline_offset + (source_pos - clip.src_start)
+        tl_start = clip["timeline_offset"] + (seg.seg_start - clip["src_start"])
+        tl_end = clip["timeline_offset"] + (seg.seg_end - clip["src_start"])
         out_segments.append({
             "seg_start": seg.seg_start,
             "seg_end": seg.seg_end,
@@ -691,6 +711,8 @@ def handle_resub(params: dict) -> dict:
                 {"text": w.text, "start": w.start, "end": w.end}
                 for w in seg.words
             ],
+            "timeline_start": tl_start,
+            "timeline_end": tl_end,
         })
 
     try:
@@ -703,6 +725,69 @@ def handle_resub(params: dict) -> dict:
     return {
         "segments": out_segments,
         "video_info": {"fps": fps, "width": width, "height": height, "duration": duration},
+        "timeline_duration": tl_duration,
+    }
+
+
+def handle_retranscribe_to_file(params: dict) -> dict:
+    """편집된 FCPXML을 읽어서 자막을 재생성하고 새 FCPXML 파일로 저장.
+
+    UI에 세그먼트를 로드하지 않고, 파일 대 파일로 직접 처리.
+
+    params:
+        fcpxml_path: str — 입력 FCPXML 경로
+        output_path: str — 출력 FCPXML 경로
+        language: str (optional, default "Korean")
+        asr_model: str (optional)
+        aligner_model: str (optional)
+        font_size: int (optional, default 42)
+        max_subtitle_chars: int (optional, default 20)
+        export_itt: bool (optional, default false)
+
+    returns:
+        output_path: str — 생성된 FCPXML 경로
+        itt_path: str | null — iTT 경로 (export_itt=true일 때)
+    """
+    from .retranscribe import retranscribe
+
+    fcpxml_path = params.get("fcpxml_path")
+    if not fcpxml_path:
+        raise ValueError("fcpxml_path is required")
+
+    output_path = params.get("output_path")
+    if not output_path:
+        raise ValueError("output_path is required")
+
+    export_itt = params.get("export_itt", False)
+
+    def on_progress(msg: str) -> None:
+        """Forward retranscribe log messages as JSON-RPC progress notifications."""
+        _progress("retranscribe", -1, msg)
+
+    result_path = retranscribe(
+        fcpxml_path=fcpxml_path,
+        output_path=output_path,
+        language=params.get("language", "Korean"),
+        asr_model=params.get("asr_model", "mlx-community/Qwen3-ASR-1.7B-8bit"),
+        aligner_model=params.get("aligner_model", "mlx-community/Qwen3-ForcedAligner-0.6B-8bit"),
+        font_size=params.get("font_size", 42),
+        max_subtitle_chars=params.get("max_subtitle_chars", 20),
+        export_itt=export_itt,
+        on_progress=on_progress,
+    )
+
+    _progress("retranscribe", 100, "Done")
+
+    itt_path = None
+    if export_itt:
+        from pathlib import Path as _P
+        candidate = _P(output_path).with_suffix(".itt")
+        if candidate.exists():
+            itt_path = str(candidate)
+
+    return {
+        "output_path": str(result_path),
+        "itt_path": itt_path,
     }
 
 
@@ -715,6 +800,7 @@ METHOD_TABLE: dict[str, Any] = {
     "echo": handle_echo,
     "analyze": handle_analyze,
     "resub": handle_resub,
+    "retranscribe_to_file": handle_retranscribe_to_file,
     "vad_only": handle_vad_only,
     "export_fcpxml": handle_export_fcpxml,
     "export_srt": handle_export_srt,

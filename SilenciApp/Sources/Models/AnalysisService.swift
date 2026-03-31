@@ -20,6 +20,10 @@ final class AnalysisService {
     /// Video metadata from the last analysis run.
     var videoInfo: VideoInfo?
 
+    /// Timeline duration for resub (may differ from video duration due to silence cuts).
+    /// nil for fresh analyses where timeline == source.
+    var timelineDuration: Double?
+
     /// Whether an analysis is currently in progress.
     private(set) var isAnalyzing = false
 
@@ -58,6 +62,7 @@ final class AnalysisService {
         error = nil
         segments = []
         videoInfo = nil
+        timelineDuration = nil
 
         let newBridge = PythonBridge()
         bridge = newBridge
@@ -105,6 +110,7 @@ final class AnalysisService {
 
             self.segments = response.segments
             self.videoInfo = response.videoInfo
+            self.timelineDuration = response.timelineDuration
 
             print("[AnalysisService] ✅ Analysis complete: \(segments.count) segments")
 
@@ -159,6 +165,7 @@ final class AnalysisService {
         error = nil
         segments = []
         videoInfo = nil
+        timelineDuration = nil
 
         let newBridge = PythonBridge()
         bridge = newBridge
@@ -200,6 +207,7 @@ final class AnalysisService {
 
             self.segments = response.segments
             self.videoInfo = response.videoInfo
+            self.timelineDuration = response.timelineDuration
 
             print("[AnalysisService] ✅ Resub complete: \(segments.count) segments")
 
@@ -221,7 +229,84 @@ final class AnalysisService {
         analysisTask = nil
     }
 
-    // MARK: - Segment editing
+    // MARK: - Retranscribe to file (no UI load)
+
+    /// Re-transcribe an edited FCPXML and save directly to a new file.
+    /// Does NOT load segments into the UI — runs ASR and writes output FCPXML.
+    /// Uses a separate bridge instance so it doesn't conflict with isAnalyzing.
+    func retranscribeToFile(
+        fcpxmlURL: URL,
+        outputURL: URL,
+        environment: PythonEnvironment? = nil,
+        language: String = "Korean",
+        asrModel: String = "mlx-community/Qwen3-ASR-0.6B-8bit",
+        fontSize: Int = 42,
+        maxSubtitleChars: Int = 20,
+        exportITT: Bool = false
+    ) async throws -> RetranscribeResponse {
+        let newBridge = PythonBridge()
+        // Expose bridge for progress reading
+        retranscribeBridge = newBridge
+
+        if case .ready(let pythonPath, let modulePath) = environment?.state {
+            newBridge.pythonPath = pythonPath
+            newBridge.projectRoot = modulePath
+        } else {
+            let fm = FileManager.default
+            var dir = URL(fileURLWithPath: fm.currentDirectoryPath)
+            var projectRoot = dir.path
+            for _ in 0..<5 {
+                let candidate = dir.appendingPathComponent("silence_cutter").path
+                if fm.fileExists(atPath: candidate) {
+                    projectRoot = dir.path
+                    break
+                }
+                dir = dir.deletingLastPathComponent()
+            }
+            newBridge.projectRoot = projectRoot
+        }
+
+        defer {
+            newBridge.stop()
+            retranscribeBridge = nil
+        }
+
+        try newBridge.start()
+        print("[AnalysisService] Python bridge started for retranscribe")
+
+        let response = try await newBridge.call(
+            "retranscribe_to_file",
+            params: [
+                "fcpxml_path": .string(fcpxmlURL.path),
+                "output_path": .string(outputURL.path),
+                "language": .string(language),
+                "asr_model": .string(asrModel),
+                "aligner_model": .string("mlx-community/Qwen3-ForcedAligner-0.6B-8bit"),
+                "font_size": .int(fontSize),
+                "max_subtitle_chars": .int(maxSubtitleChars),
+                "export_itt": .bool(exportITT),
+            ],
+            timeout: 600,
+            as: RetranscribeResponse.self
+        )
+
+        print("[AnalysisService] ✅ Retranscribe complete: \(response.outputPath)")
+        return response
+    }
+
+    /// Progress from the retranscribe bridge (separate from analysis bridge).
+    var retranscribeProgress: ProgressInfo? {
+        retranscribeBridge?.currentProgress
+    }
+
+    /// Cancel a running retranscribe operation.
+    func cancelRetranscribe() {
+        retranscribeBridge?.stop()
+        retranscribeBridge = nil
+    }
+
+    @ObservationIgnored
+    private nonisolated(unsafe) var retranscribeBridge: PythonBridge?
 
     /// Split a segment at a given word index. Words before the index stay in the original,
     /// words from the index onward go to a new segment inserted after.

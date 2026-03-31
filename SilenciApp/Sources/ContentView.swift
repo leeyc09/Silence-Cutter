@@ -12,6 +12,21 @@ struct ContentView: View {
     @State private var showFindReplace = false
     @State private var showSettings = false
     @State private var showAnalyzeDialog = false
+    @State private var retranscribeItem: RetranscribeItem?
+    @State private var retranscribeState: RetranscribeState = .idle
+
+    struct RetranscribeItem: Identifiable {
+        let id = UUID()
+        let inputURL: URL
+        let defaultOutputURL: URL
+    }
+
+    enum RetranscribeState {
+        case idle
+        case running
+        case done(outputPath: String)
+        case error(String)
+    }
 
     var body: some View {
         ZStack {
@@ -24,6 +39,17 @@ struct ContentView: View {
             }
         }
         .preferredColorScheme(.dark)
+        .sheet(item: $retranscribeItem) { item in
+            RetranscribeSheetView(
+                inputURL: item.inputURL,
+                defaultOutputURL: item.defaultOutputURL,
+                settings: settings,
+                state: $retranscribeState,
+                analysisService: analysisService,
+                pythonEnv: pythonEnv,
+                onDismiss: { retranscribeItem = nil }
+            )
+        }
     }
 
     // MARK: - Setup Overlay
@@ -142,6 +168,7 @@ struct ContentView: View {
                 TimelineBarWrapper(
                     segments: analysisService.segments,
                     videoModel: videoModel,
+                    timelineDuration: analysisService.timelineDuration,
                     onSeek: { videoModel.seek(to: $0) }
                 )
                 .frame(height: 60)
@@ -234,45 +261,43 @@ struct ContentView: View {
         }
     }
 
-    // MARK: - Import FCPXML (Resub)
+    // MARK: - Import FCPXML (Retranscribe to file)
 
-    /// Opens an NSOpenPanel for .fcpxml files, then runs resub analysis.
+    /// Opens an NSOpenPanel for .fcpxml files, then shows the retranscribe settings sheet.
     private func importFCPXML() {
-        let panel = NSOpenPanel()
-        // Don't set allowedContentTypes — .fcpxmld is a directory bundle,
-        // UTType filtering prevents selecting it. Filter manually after selection.
-        panel.allowsMultipleSelection = false
-        panel.canChooseDirectories = true   // .fcpxmld is a directory bundle
-        panel.canChooseFiles = true
-        panel.treatsFilePackagesAsDirectories = false  // treat .fcpxmld as opaque package
-        panel.message = L10n.tr("toolbar.import_fcpxml_message")
-        panel.begin { response in
-            guard response == .OK, let url = panel.url else { return }
+        let openPanel = NSOpenPanel()
+        openPanel.allowsMultipleSelection = false
+        openPanel.canChooseDirectories = true   // .fcpxmld is a directory bundle
+        openPanel.canChooseFiles = true
+        openPanel.treatsFilePackagesAsDirectories = false
+        openPanel.message = L10n.tr("toolbar.import_fcpxml_message")
 
-            let ext = url.pathExtension.lowercased()
-            guard ext == "fcpxmld" || ext == "fcpxml" || ext == "xml" else {
-                print("[Silenci] Unsupported file: \(url.lastPathComponent)")
+        let response = openPanel.runModal()
+        guard response == .OK, let url = openPanel.url else { return }
+
+        let ext = url.pathExtension.lowercased()
+        guard ext == "fcpxmld" || ext == "fcpxml" || ext == "xml" else {
+            print("[Silenci] Unsupported file: \(url.lastPathComponent)")
+            return
+        }
+
+        // Resolve .fcpxmld bundle → Info.fcpxml inside
+        let resolvedURL: URL
+        if ext == "fcpxmld" {
+            resolvedURL = url.appendingPathComponent("Info.fcpxml")
+            guard FileManager.default.fileExists(atPath: resolvedURL.path) else {
+                print("[Silenci] Error: Info.fcpxml not found inside .fcpxmld bundle")
                 return
             }
-
-            // Resolve .fcpxmld bundle → Info.fcpxml inside
-            let resolvedURL: URL
-            if ext == "fcpxmld" {
-                resolvedURL = url.appendingPathComponent("Info.fcpxml")
-                guard FileManager.default.fileExists(atPath: resolvedURL.path) else {
-                    print("[Silenci] Error: Info.fcpxml not found inside .fcpxmld bundle")
-                    return
-                }
-            } else {
-                resolvedURL = url
-            }
-            // Try to load the source video from FCPXML for preview
-            if let videoURL = Self.findVideoInFCPXML(resolvedURL) {
-                videoModel.loadVideo(url: videoURL)
-            }
-            settings.save()
-            analysisService.startResub(fcpxmlURL: resolvedURL, environment: pythonEnv, settings: settings)
+        } else {
+            resolvedURL = url
         }
+
+        retranscribeState = .idle
+        let dir = url.deletingLastPathComponent()
+        let baseName = url.deletingPathExtension().lastPathComponent
+        let outURL = dir.appendingPathComponent(baseName + "_resub.fcpxml")
+        retranscribeItem = RetranscribeItem(inputURL: resolvedURL, defaultOutputURL: outURL)
     }
 
     /// Parse FCPXML to find the source video file path.

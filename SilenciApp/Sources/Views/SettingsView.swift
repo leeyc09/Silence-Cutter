@@ -9,6 +9,8 @@ struct SettingsView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
                 header
+                appLanguageSection
+                Divider()
                 languageSection
                 Divider()
                 vadSection
@@ -21,7 +23,7 @@ struct SettingsView: View {
             }
             .padding(20)
         }
-        .frame(width: 380, height: 520)
+        .frame(width: 380, height: 570)
         .background(.ultraThinMaterial)
     }
 
@@ -42,6 +44,34 @@ struct SettingsView: View {
                     .font(.title3)
             }
             .buttonStyle(.plain)
+        }
+    }
+
+    // MARK: - App Language
+
+    @State private var appLanguage: L10n.AppLanguage = L10n.currentLanguage
+
+    private var appLanguageSection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Label("앱 언어 / App Language", systemImage: "globe")
+                .font(.subheadline.bold())
+                .foregroundStyle(.secondary)
+
+            Picker("", selection: $appLanguage) {
+                ForEach(L10n.AppLanguage.allCases) { lang in
+                    Text(lang.displayName).tag(lang)
+                }
+            }
+            .pickerStyle(.segmented)
+            .onChange(of: appLanguage) { _, newValue in
+                L10n.currentLanguage = newValue
+            }
+
+            if appLanguage != L10n.currentLanguage || appLanguage != .system {
+                Text("앱을 다시 시작하면 완전히 적용됩니다")
+                    .font(.caption)
+                    .foregroundStyle(.orange)
+            }
         }
     }
 

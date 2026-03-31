@@ -248,6 +248,34 @@ struct ExportService {
                     """
                 }
 
+                // Inline captions (iTT) — lane 2, same timing as titles
+                for wc in wordChunks {
+                    tsCounter += 1
+                    let capTsId = "cts\(tsCounter)"
+
+                    var chunkStart = snapToFrame(seconds: wc.start, frameNum: frameNum, frameDen: frameDen)
+                    var chunkEnd = snapToFrame(seconds: wc.end, frameNum: frameNum, frameDen: frameDen)
+                    if chunkStart.0 * srcStart.1 < srcStart.0 * chunkStart.1 { chunkStart = srcStart }
+                    if chunkEnd.0 * srcEnd.1 > srcEnd.0 * chunkEnd.1 { chunkEnd = srcEnd }
+                    let chunkDur = subRational(chunkEnd, chunkStart)
+                    guard chunkDur.0 > 0 else { continue }
+
+                    let escapedChunk = xmlEscape(wc.text)
+                    xml += """
+                                <caption lane="2" \
+                    offset="\(rationalStr(chunkStart))" \
+                    name="\(escapedChunk)" \
+                    start="3600s" \
+                    duration="\(rationalStr(chunkDur))" \
+                    role="iTT?captionFormat=ITT.ko">
+                                  <text placement="bottom"><text-style ref="\(capTsId)">\(escapedChunk)</text-style></text>
+                                  <text-style-def id="\(capTsId)">
+                                    <text-style font=".AppleSystemUIFont" fontSize="13" fontFace="Regular" fontColor="1 1 1 1" backgroundColor="0 0 0 1"/>
+                                  </text-style-def>
+                                </caption>\n
+                    """
+                }
+
                 xml += "                </asset-clip>\n"
             }
             offset = addRational(offset, clipDur)

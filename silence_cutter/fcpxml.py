@@ -302,6 +302,40 @@ def generate_fcpxml(
                     "alignment": "center",
                 })
 
+            # Inline captions (iTT) — lane 2, same timing as titles
+            for ci, chunk in enumerate(chunks):
+                cap_ts_id = f"cts{idx + 1}_{ci + 1}"
+
+                chunk_start_snap = _snap_to_frame(chunk["start"], seq_fn, seq_fd)
+                chunk_end_snap = _snap_to_frame(chunk["end"], seq_fn, seq_fd)
+                if chunk_start_snap < src_start:
+                    chunk_start_snap = src_start
+                if chunk_end_snap > src_end:
+                    chunk_end_snap = src_end
+                chunk_dur = chunk_end_snap - chunk_start_snap
+                if chunk_dur <= 0:
+                    continue
+
+                caption_el = SubElement(clip_el, "caption", {
+                    "lane": "2",
+                    "offset": _rational_str(chunk_start_snap),
+                    "name": chunk["text"][:50],
+                    "start": "3600s",
+                    "duration": _rational_str(chunk_dur),
+                    "role": "iTT?captionFormat=ITT.ko",
+                })
+                cap_text_el = SubElement(caption_el, "text", placement="bottom")
+                cap_ts = SubElement(cap_text_el, "text-style", ref=cap_ts_id)
+                cap_ts.text = chunk["text"]
+                cap_ts_def = SubElement(caption_el, "text-style-def", id=cap_ts_id)
+                SubElement(cap_ts_def, "text-style", {
+                    "font": ".AppleSystemUIFont",
+                    "fontSize": "13",
+                    "fontFace": "Regular",
+                    "fontColor": "1 1 1 1",
+                    "backgroundColor": "0 0 0 1",
+                })
+
         elif seg.text:
             # 단어 타임스탬프 없을 때 폴백: 전체 텍스트 한 줄
             ts_id = f"ts{idx + 1}_0"
@@ -328,6 +362,28 @@ def generate_fcpxml(
                 "shadowColor": "0 0 0 0.75",
                 "shadowOffset": "3 315",
                 "alignment": "center",
+            })
+
+            # Fallback caption (no words)
+            cap_ts_id = f"cts{idx + 1}_0"
+            caption_el = SubElement(clip_el, "caption", {
+                "lane": "2",
+                "offset": _rational_str(src_start),
+                "name": seg.text[:50],
+                "start": "3600s",
+                "duration": _rational_str(clip_dur),
+                "role": "iTT?captionFormat=ITT.ko",
+            })
+            cap_text_el = SubElement(caption_el, "text", placement="bottom")
+            cap_ts = SubElement(cap_text_el, "text-style", ref=cap_ts_id)
+            cap_ts.text = seg.text
+            cap_ts_def = SubElement(caption_el, "text-style-def", id=cap_ts_id)
+            SubElement(cap_ts_def, "text-style", {
+                "font": ".AppleSystemUIFont",
+                "fontSize": "13",
+                "fontFace": "Regular",
+                "fontColor": "1 1 1 1",
+                "backgroundColor": "0 0 0 1",
             })
 
         timeline_offset += clip_dur
@@ -526,6 +582,36 @@ def generate_fcpxml_multi(
                         "alignment": "center",
                     })
 
+                # Inline captions (iTT) for multi
+                for chunk in chunks:
+                    ts_counter += 1
+                    cap_ts_id = f"cts{ts_counter}"
+                    cs = _snap_to_frame(chunk["start"], seq_fn, seq_fd)
+                    ce = _snap_to_frame(chunk["end"], seq_fn, seq_fd)
+                    if cs < src_start: cs = src_start
+                    if ce > src_end: ce = src_end
+                    cd = ce - cs
+                    if cd <= 0: continue
+                    caption_el = SubElement(clip_el, "caption", {
+                        "lane": "2",
+                        "offset": _rational_str(cs),
+                        "name": chunk["text"][:50],
+                        "start": "3600s",
+                        "duration": _rational_str(cd),
+                        "role": "iTT?captionFormat=ITT.ko",
+                    })
+                    cap_text_el = SubElement(caption_el, "text", placement="bottom")
+                    cap_ts = SubElement(cap_text_el, "text-style", ref=cap_ts_id)
+                    cap_ts.text = chunk["text"]
+                    cap_ts_def = SubElement(caption_el, "text-style-def", id=cap_ts_id)
+                    SubElement(cap_ts_def, "text-style", {
+                        "font": ".AppleSystemUIFont",
+                        "fontSize": "13",
+                        "fontFace": "Regular",
+                        "fontColor": "1 1 1 1",
+                        "backgroundColor": "0 0 0 1",
+                    })
+
             elif seg.text:
                 ts_counter += 1
                 ts_id = f"ts{ts_counter}"
@@ -549,6 +635,28 @@ def generate_fcpxml_multi(
                     "shadowColor": "0 0 0 0.75",
                     "shadowOffset": "3 315",
                     "alignment": "center",
+                })
+
+                # Fallback caption for multi (no words)
+                cap_ts_id = f"cts{ts_counter}"
+                caption_el = SubElement(clip_el, "caption", {
+                    "lane": "2",
+                    "offset": _rational_str(src_start),
+                    "name": seg.text[:50],
+                    "start": "3600s",
+                    "duration": _rational_str(clip_dur),
+                    "role": "iTT?captionFormat=ITT.ko",
+                })
+                cap_text_el = SubElement(caption_el, "text", placement="bottom")
+                cap_ts = SubElement(cap_text_el, "text-style", ref=cap_ts_id)
+                cap_ts.text = seg.text
+                cap_ts_def = SubElement(caption_el, "text-style-def", id=cap_ts_id)
+                SubElement(cap_ts_def, "text-style", {
+                    "font": ".AppleSystemUIFont",
+                    "fontSize": "13",
+                    "fontFace": "Regular",
+                    "fontColor": "1 1 1 1",
+                    "backgroundColor": "0 0 0 1",
                 })
 
             timeline_offset += clip_dur

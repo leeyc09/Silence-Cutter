@@ -5,10 +5,14 @@ import Foundation
 struct AnalyzeResponse: Codable, Sendable {
     let segments: [Segment]
     let videoInfo: VideoInfo
+    /// Total timeline duration (for resub, may differ from video duration).
+    /// nil when from a fresh analysis.
+    let timelineDuration: Double?
 
     enum CodingKeys: String, CodingKey {
         case segments
         case videoInfo = "video_info"
+        case timelineDuration = "timeline_duration"
     }
 }
 
@@ -18,4 +22,15 @@ struct VideoInfo: Codable, Sendable {
     let width: Int
     let height: Int
     let duration: Double
+}
+
+/// Response from the Python `retranscribe_to_file` JSON-RPC method.
+struct RetranscribeResponse: Codable, Sendable {
+    let outputPath: String
+    let ittPath: String?
+
+    enum CodingKeys: String, CodingKey {
+        case outputPath = "output_path"
+        case ittPath = "itt_path"
+    }
 }

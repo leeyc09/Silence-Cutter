@@ -7,9 +7,9 @@ import Foundation
 /// `id` and `isKept` are Swift-side only — not present in the JSON.
 struct Segment: Identifiable, Codable, Sendable {
     let id: UUID
-    /// Start time in seconds
+    /// Start time in seconds (source video time)
     var start: Double
-    /// End time in seconds
+    /// End time in seconds (source video time)
     var end: Double
     /// Transcribed text for this segment
     var text: String
@@ -17,6 +17,12 @@ struct Segment: Identifiable, Codable, Sendable {
     var isKept: Bool
     /// Word-level timing from ASR
     var words: [Word]
+
+    /// Timeline start time (for edited FCPXML where clip order differs from source order).
+    /// nil when segments come from a fresh analysis (source order == timeline order).
+    var timelineStart: Double?
+    /// Timeline end time.
+    var timelineEnd: Double?
 
     /// Duration of this segment in seconds
     var duration: Double { end - start }
@@ -34,13 +40,15 @@ struct Segment: Identifiable, Codable, Sendable {
         return keptText
     }
 
-    init(id: UUID = UUID(), start: Double, end: Double, text: String, isKept: Bool = true, words: [Word] = []) {
+    init(id: UUID = UUID(), start: Double, end: Double, text: String, isKept: Bool = true, words: [Word] = [], timelineStart: Double? = nil, timelineEnd: Double? = nil) {
         self.id = id
         self.start = start
         self.end = end
         self.text = text
         self.isKept = isKept
         self.words = words
+        self.timelineStart = timelineStart
+        self.timelineEnd = timelineEnd
     }
 
     // MARK: - Codable
@@ -50,6 +58,8 @@ struct Segment: Identifiable, Codable, Sendable {
         case end = "seg_end"
         case text
         case words
+        case timelineStart = "timeline_start"
+        case timelineEnd = "timeline_end"
     }
 
     init(from decoder: Decoder) throws {
@@ -58,6 +68,8 @@ struct Segment: Identifiable, Codable, Sendable {
         self.end = try container.decode(Double.self, forKey: .end)
         self.text = try container.decode(String.self, forKey: .text)
         self.words = try container.decodeIfPresent([Word].self, forKey: .words) ?? []
+        self.timelineStart = try container.decodeIfPresent(Double.self, forKey: .timelineStart)
+        self.timelineEnd = try container.decodeIfPresent(Double.self, forKey: .timelineEnd)
         // Swift-side defaults — not present in Python JSON
         self.id = UUID()
         self.isKept = true
@@ -69,5 +81,7 @@ struct Segment: Identifiable, Codable, Sendable {
         try container.encode(end, forKey: .end)
         try container.encode(text, forKey: .text)
         try container.encode(words, forKey: .words)
+        try container.encodeIfPresent(timelineStart, forKey: .timelineStart)
+        try container.encodeIfPresent(timelineEnd, forKey: .timelineEnd)
     }
 }

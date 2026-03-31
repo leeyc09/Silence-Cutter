@@ -84,18 +84,31 @@ struct TimelineBarView: View {
     private func buildRegions() -> [Region] {
         guard duration > 0 else { return [] }
 
-        let sorted = segments.sorted { $0.start < $1.start }
+        // Use timeline coordinates if available (resub with reordered clips),
+        // otherwise fall back to source time.
+        let hasTimelineCoords = segments.contains { $0.timelineStart != nil }
+
+        let sorted: [Segment]
+        if hasTimelineCoords {
+            sorted = segments.sorted { ($0.timelineStart ?? $0.start) < ($1.timelineStart ?? $1.start) }
+        } else {
+            sorted = segments.sorted { $0.start < $1.start }
+        }
+
         var regions: [Region] = []
         var cursor: Double = 0
 
         for seg in sorted {
+            let segStart = hasTimelineCoords ? (seg.timelineStart ?? seg.start) : seg.start
+            let segEnd = hasTimelineCoords ? (seg.timelineEnd ?? seg.end) : seg.end
+
             // Fill gap before this segment with silence
-            if seg.start > cursor {
-                regions.append(Region(start: cursor, end: seg.start, type: .silence))
+            if segStart > cursor {
+                regions.append(Region(start: cursor, end: segStart, type: .silence))
             }
             // Voiced region
-            regions.append(Region(start: seg.start, end: seg.end, type: .voiced(isKept: seg.isKept)))
-            cursor = seg.end
+            regions.append(Region(start: segStart, end: segEnd, type: .voiced(isKept: seg.isKept)))
+            cursor = segEnd
         }
 
         // Fill trailing gap
@@ -153,14 +166,40 @@ struct TimelineBarView: View {
 struct TimelineBarWrapper: View {
     let segments: [Segment]
     var videoModel: VideoPlayerModel
+    /// Override duration for resub (timeline may be shorter than source video).
+    var timelineDuration: Double?
     let onSeek: (TimeInterval) -> Void
 
     var body: some View {
+        let effectiveDuration = timelineDuration ?? videoModel.duration
+
         TimelineBarView(
             segments: segments,
-            duration: videoModel.duration,
-            currentTime: videoModel.currentTime,
+            duration: effectiveDuration,
+            currentTime: mapCurrentTime(),
             onSeek: onSeek
         )
+    }
+
+    /// Map the video player's source-time playhead to timeline-time when
+    /// timeline coordinates are available (resub with reordered clips).
+    private func mapCurrentTime() -> TimeInterval {
+        let ct = videoModel.currentTime
+
+        // If no segment has timeline coordinates, pass through unchanged
+        guard segments.contains(where: { $0.timelineStart != nil }) else {
+            return ct
+        }
+
+        // Find the segment whose source range contains currentTime
+        if let seg = segments.first(where: { ct >= $0.start && ct < $0.end && $0.timelineStart != nil }) {
+            let span = seg.end - seg.start
+            let frac = span > 0 ? (ct - seg.start) / span : 0
+            let tlStart = seg.timelineStart!
+            let tlEnd = seg.timelineEnd ?? tlStart
+            return tlStart + frac * (tlEnd - tlStart)
+        }
+
+        return ct
     }
 }
